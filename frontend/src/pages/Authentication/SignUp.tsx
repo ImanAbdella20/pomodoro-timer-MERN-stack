@@ -1,7 +1,7 @@
-import {useState} from 'react';
+import { useState} from 'react';
 import axios from 'axios';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import {auth} from ''
+import {auth} from '../../../firebaseConfig'
 
 const SignUp = () => {
 
@@ -9,16 +9,25 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSignUp = async(e) =>{
+  const handleSignUp = async(e: React.FormEvent) =>{
     e.preventDefault();
+    console.log("Sign up initiated");
     
     try {
+
+      console.log("Creating user");
       const userCredential = createUserWithEmailAndPassword(auth , email , password);
       const user = (await userCredential).user;
+      console.log("user created");
 
-      await axios.post('http://localhost:5000/api/signup', {
-        
+      await axios.post('http://localhost:5002/api/signup', {
+        username: userName,
+        email,
+        uid:user.uid
       })
+
+      //redirect
+      console.log('User Successfully Created!');
     } catch (error) {
       console.error('Error signing up:', error);
     }
