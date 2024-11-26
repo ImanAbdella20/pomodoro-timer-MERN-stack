@@ -24,9 +24,9 @@ const SignUp = () => {
         const user = userCredential.user;
 
         console.log("Sign up initiated");
-        await axios.post('http://localhost:5003/api/signup', { 
+        await axios.post('http://localhost:5002/api/signup', { 
           username: userName,
-           email, 
+           email:email, 
            uid: user.uid
            });
         console.log('User Successfully Created!');
