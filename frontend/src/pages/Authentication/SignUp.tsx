@@ -24,7 +24,7 @@ const SignUp = () => {
         const user = userCredential.user;
 
         console.log("Sign up initiated");
-        await axios.post('http://localhost:5009/api/signup', { 
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/signup`, { 
           username: userName,
            email:email, 
            uid: user.uid
@@ -40,7 +40,8 @@ const SignUp = () => {
 
   return (
     <>
-      <h1>Sign Up</h1>
+    <div className='flex justify-center items-center bg-customGreen min-h-screen'>
+    <h1>Sign Up</h1>
       <form onSubmit={handleSignUp}>
         <input
           type="text"
@@ -68,6 +69,8 @@ const SignUp = () => {
         />
         <button type="submit" disabled={isRegistering}>Sign Up</button>
       </form>
+      
+    </div> 
     </>
   );
 };

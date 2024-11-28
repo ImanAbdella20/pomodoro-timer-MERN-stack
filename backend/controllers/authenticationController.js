@@ -31,12 +31,12 @@ export const signUp = async (req, res) => {
 // Login Function
 export const login = async (req, res) => {
   const { email, idToken } = req.body;
-
   try {
 
     if(!idToken){
       throw new Error("ID token is missing");
     }
+
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     const { uid } = decodedToken;
 

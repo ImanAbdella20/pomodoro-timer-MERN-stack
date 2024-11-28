@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/authContext';
 import { doSignInUserWithEmailAndPassword, doSignInWithGoogle } from '../../firebase/auth';
 import axios from 'axios';
-import api from '../../../axios/axiosInstance'
+
 
 const Login = () => {
   const authContext = useAuth();
@@ -32,7 +32,8 @@ const Login = () => {
         console.log("Id Token:" , idToken);
 
         // Send token to backend
-        await axios.post('http://localhost:5009/api/login', { email, idToken });
+  
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { email, idToken });
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -57,7 +58,7 @@ const Login = () => {
         
 
         // Send token to backend
-        await axios.post('http://localhost:5009/api/login', { email: user.email, idToken });
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { email: user.email, idToken });
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -69,7 +70,8 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleLogin}>
+    <div className='flex items-center justify-center min-h-screen bg-customGreen'>
+ <form onSubmit={handleLogin} >
       <input
         type="email"
         placeholder='Enter your email'
@@ -86,6 +88,8 @@ const Login = () => {
       <button type="submit" disabled={signingIn}>Sign In</button>
       <button onClick={onGoogleSignIn} disabled={signingIn}>Sign In with Google</button>
     </form>
+    </div>
+   
   );
 };
 
