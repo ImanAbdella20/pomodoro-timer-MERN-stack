@@ -40,35 +40,56 @@ const SignUp = () => {
 
   return (
     <>
-    <div className='flex justify-center items-center bg-customGreen min-h-screen'>
-    <h1>Sign Up</h1>
+    <div className='flex justify-center items-center  bg-customGreen  min-h-screen '>
+      <div className='p-8 max-w-md  bg-white rounded-md'>
+      <h1 className='text-center mb-8 text-black font-sans font-bold'>Sign Up</h1>
       <form onSubmit={handleSignUp}>
         <input
           type="text"
           placeholder='Enter Username'
           onChange={(e) => setUserName(e.target.value)}
           required
+          className='w-full mb-5 h-9 rounded-md pl-3'
         />
         <input
           type="email"
           placeholder='Enter Email'
           onChange={(e) => setEmail(e.target.value)}
           required
+           className='w-full mb-5 h-9 rounded-md pl-3'
         />
         <input
           type="password"
           placeholder='Enter Password'
           onChange={(e) => setPassword(e.target.value)}
           required
+           className='w-full mb-5 h-9 rounded-md pl-3'
         />
         <input
           type="password"
           placeholder='Confirm Password'
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
+           className='w-full mb-5 h-9 rounded-md pl-3'
         />
-        <button type="submit" disabled={isRegistering}>Sign Up</button>
+        <button 
+        type="submit" 
+        disabled={isRegistering} 
+        className='bg-customGreen w-full h-9 rounded-md text-white'
+        >Sign Up</button>
+
+        <h6 className='font-light '>Already have an account?</h6>
+<div className='flex '>
+<hr className='w-48'/> or <hr className='w-48' />
+</div>
+
+<button
+className='bg-customGreen w-full h-9 rounded-md text-white'
+> 
+  Login with Google</button>
       </form>
+
+      </div>
       
     </div> 
     </>
