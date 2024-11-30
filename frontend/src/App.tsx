@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import {auth} from './firebase/firebaseConfig';
 import { doSignOut } from './firebase/auth';
-import { RouterProvider } from 'react-router-dom';
+import { Router, RouterProvider } from 'react-router-dom';
 import router from './components/route/route';
+import Tasks from './pages/tasks/Tasks';
+import Header from './components/header/Header';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -20,7 +22,8 @@ const App: React.FC = () => {
     <div>
       {user ? (
         <div>
-          <p>Welcome, {user.email}</p>
+          <p>welcome, {user.email}</p>
+          <Tasks/>
           <button onClick={() => doSignOut()}>Sign Out</button>
         </div>
       ) : (
