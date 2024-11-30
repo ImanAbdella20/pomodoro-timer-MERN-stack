@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/authContext';
-import { doSignInUserWithEmailAndPassword, doSignInWithGoogle } from '../../firebase/auth';
+import { doSignInUserWithEmailAndPassword } from '../../firebase/auth';
 import axios from 'axios';
+import { onGoogleSignIn } from './googleLogin';
 
 
 const Login = () => {
@@ -44,30 +45,7 @@ const Login = () => {
     }
   };
 
-  const onGoogleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!signingIn) {
-      setSigningIn(true);
-
-      try {
-        const userCredential = await doSignInWithGoogle();
-        const user = userCredential.user;
-        const idToken = await user.getIdToken();
-        console.log("Id Token:" , idToken);
-        
-
-        // Send token to backend
-        await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { email: user.email, idToken });
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        }
-      } finally {
-        setSigningIn(false);
-      }
-    }
-  };
+  
 
   return (
     <div className='flex items-center justify-center min-h-screen bg-customGreen'>
@@ -86,11 +64,11 @@ const Login = () => {
       />
       {error && <div className="error">{error}</div>}
       <button type="submit" disabled={signingIn}>Sign In</button>
-      <button onClick={onGoogleSignIn} disabled={signingIn}>Sign In with Google</button>
+      <button onClick={(e) => onGoogleSignIn(e,signingIn,setSigningIn,setError)} disabled={signingIn}>Sign In with Google</button>
     </form>
     </div>
    
   );
 };
 
-export default Login;
+export default Login ;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import {auth} from './firebase/firebaseConfig';
-import SignUp from './pages/Authentication/SignUp';
 import { doSignOut } from './firebase/auth';
-import PomodoroTimerPage from './pages/PomodoroTimerPage';
+import { RouterProvider } from 'react-router-dom';
+import router from './components/route/route';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -21,12 +21,11 @@ const App: React.FC = () => {
       {user ? (
         <div>
           <p>Welcome, {user.email}</p>
-          <PomodoroTimerPage/>
           <button onClick={() => doSignOut()}>Sign Out</button>
         </div>
       ) : (
         <div>
-          <SignUp />
+           <RouterProvider router={ router}/>
         </div>
       )}
     </div>
