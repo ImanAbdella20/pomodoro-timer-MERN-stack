@@ -45,7 +45,26 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "User does not exist" });
     }
 
-    return res.status(200).json({ message: "User authenticated successfully", uid });
+    // Generate a custome JWT
+
+    const token = jwt.sign( { 
+      user: 
+      { 
+        id: uid, 
+        email 
+      } 
+    }, 
+    process.env.SECRET_KEY, 
+    { 
+      expiresIn: '1h' 
+    });
+
+    req.login(existingUser, (err) => {
+      if (err) {
+          return res.status(500).json({ message: "Login failed" });
+      }
+      return res.status(200).json({ message: "Login Successful", token });
+  });
   } catch (error) {
     console.error("Error verifying ID token:", error);
     return res.status(500).json({ message: "Error verifying ID token" });

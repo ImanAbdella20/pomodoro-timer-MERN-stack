@@ -1,10 +1,23 @@
 import mongoose from 'mongoose';
 
 const taskModel = mongoose.Schema({
-
-    tasks:{
-        type:String,
-        required:true
+    user: {
+         type: mongoose.Schema.Types.ObjectId, 
+         ref: "User", 
+         required: true 
+        }, 
+    category: {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: "Category", 
+        required: true 
+    },
+    title: { 
+        type: String, 
+        required: true 
+    }, 
+    description: { 
+        type: String, 
+        required: false 
     },
     status:{
         type:String,
@@ -42,4 +55,4 @@ const taskModel = mongoose.Schema({
 
 })
 
-export const Tasks = mongoose.model("Tasks" , taskModel);
+export const Task = mongoose.model("Task" , taskModel);
