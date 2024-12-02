@@ -2,3 +2,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.nav-link::after{
+    content:"";
+    position: absolute;
+    bottom:-3px;
+    left: 0; 
+    width: 0;
+     height: 2px; 
+     background-color: white; 
+     transition: width 0.3s ease; 
+    } 
+    
+.nav-link:hover::after {
+     width: 100%;
+    }
