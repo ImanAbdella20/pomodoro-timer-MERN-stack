@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import authRoute from './routes/userRoute.js'
 import mongoose from 'mongoose';
 import cors from 'cors'; 
+import categoryRoute from './routes/categoryRoute.js';
 
 dotenv.config();
 const app = express()
@@ -12,8 +13,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
-
+// api
 app.use('/api', authRoute);
+app.use('/api', categoryRoute)
 
 
 const connectDB = async() => {

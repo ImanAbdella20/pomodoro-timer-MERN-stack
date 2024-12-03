@@ -7,10 +7,12 @@ export default {
   theme: {
     extend: {
       colors:{
-        customGreen:"#115e59",
+        customGreen: "#db2777",
       },
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(to right, #db2777, #e879f9)',
+      }
     },
   },
   plugins: [],
 }
-

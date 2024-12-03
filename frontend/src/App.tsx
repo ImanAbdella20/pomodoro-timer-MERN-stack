@@ -5,11 +5,13 @@ import { doSignOut } from './firebase/auth';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Header from './components/header/Header';
 import SignUp from './pages/Authentication/SignUp';
+import Tasks from './pages/tasks/Tasks';
+import Track from './pages/track/Track';
+import Category from './pages/Category/Category';
 
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
-  const [theme, setTheme] = useState<string>('light');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -19,13 +21,24 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
+  // const handleSignOut = async() => {
+  //   try {
+  //     await doSignOut();
+  //     setUser(null);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  //   console.log('User signed out successfully');
+  // }
+
   return (
     <Router>
       <div>
         {user ? (
           <div>
-            <Header theme= {theme} setTheme= {setTheme}/>
-            <button onClick={() => doSignOut()}>Sign Out</button>
+            <Header/> 
+            <Category/>
+           
           </div>
         ) : (
           <div>

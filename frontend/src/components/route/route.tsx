@@ -3,6 +3,7 @@ import Login from "../../pages/Authentication/Login";
 import SignUp from "../../pages/Authentication/SignUp";
 import Tasks from "../../pages/tasks/Tasks";
 import Track from "../../pages/track/Track";
+import Category from "../../pages/Category/Category";
 
 
 const router = createBrowserRouter([
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
     {
         path:'/track',
         element:<Track/>
+    },
+    {
+        path:'/category',
+        element:<Category/>
     },
    
 ]);
