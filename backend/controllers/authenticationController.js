@@ -1,5 +1,6 @@
 import admin from '../config/fireBaseAdmin.js';
 import { User } from '../models/userModel.js';
+import jwt from 'jsonwebtoken';
 
 // Sign Up Function
 export const signUp = async (req, res) => {
@@ -59,12 +60,7 @@ export const login = async (req, res) => {
       expiresIn: '1h' 
     });
 
-    req.login(existingUser, (err) => {
-      if (err) {
-          return res.status(500).json({ message: "Login failed" });
-      }
-      return res.status(200).json({ message: "Login Successful", token });
-  });
+    return res.status(200).json({ message: "Login Successful", token });
   } catch (error) {
     console.error("Error verifying ID token:", error);
     return res.status(500).json({ message: "Error verifying ID token" });

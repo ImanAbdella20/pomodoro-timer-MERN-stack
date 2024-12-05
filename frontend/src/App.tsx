@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase/firebaseConfig';
 import { doSignOut } from './firebase/auth';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/header/Header';
+import Login from './pages/Authentication/Login';
 import SignUp from './pages/Authentication/SignUp';
+import Category from './pages/Category/Category';
 import Tasks from './pages/tasks/Tasks';
 import Track from './pages/track/Track';
-import Category from './pages/Category/Category';
-
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -21,29 +21,26 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // const handleSignOut = async() => {
-  //   try {
-  //     await doSignOut();
-  //     setUser(null);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  //   console.log('User signed out successfully');
-  // }
-
   return (
     <Router>
       <div>
         {user ? (
           <div>
-            <Header/> 
-            <Category/>
-           
+            <Header />
+            <button onClick={() => doSignOut()}>Sign Out</button>
+            <Routes>
+              <Route path="/category" element={<Category />} />
+              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/track" element={<Track />} />
+              <Route path="*" element={<Navigate to="/category" />}/> 
+            </Routes>
           </div>
         ) : (
-          <div>
-            <SignUp/>
-          </div>
+          <Routes>
+            <Route path="/" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="*" element={<Navigate to="/login" />}/>{/* Redirect to login for unauthenticated users */}
+          </Routes>
         )}
       </div>
     </Router>

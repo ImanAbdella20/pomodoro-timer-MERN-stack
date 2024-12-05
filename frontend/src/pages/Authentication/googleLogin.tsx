@@ -18,10 +18,12 @@ export const onGoogleSignIn = async (
         const user = userCredential.user;
         const idToken = await user.getIdToken();
         console.log("Id Token:" , idToken);
+
+        localStorage.setItem('authToken', idToken);
         
 
         // Send token to backend
-        await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, { email: user.email, idToken });
+       await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/login`, { email: user.email, idToken });
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);

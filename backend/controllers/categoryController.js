@@ -3,7 +3,7 @@ import { Category } from "../models/categoryModel.js";
 export const getCategories = async (req,res) => {
    let getAllCategories;
 try {
- getAllCategories = await Category.find({user:req.user._id}); 
+ getAllCategories = await Category.find(); 
     if(getAllCategories){
         return res.status(200).json(getAllCategories);
     }
@@ -11,7 +11,6 @@ try {
      return res.status(500).json({ message: "An error occurred" });
 }   
 }
-
 
 export const getCategoryById = async(req,res) =>{
     const categoryId = req.params.id;

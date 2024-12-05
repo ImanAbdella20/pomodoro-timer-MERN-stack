@@ -9,16 +9,22 @@ type Category = {
 
 const CategoryComponent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('/api/categories', {
+        const authToken = localStorage.getItem('authToken');  // Fetch the newly received token
+        if (!authToken) {
+          throw new Error('No auth token found');
+        }
+
+        const { data } = await axios.get(`${import.meta.env.REACT_APP_API_URL}/api/categories`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+            Authorization: `Bearer ${authToken}`,
           },
         });
-        // Ensure data is an array
+
         if (Array.isArray(data)) {
           setCategories(data);
         } else {
@@ -26,6 +32,7 @@ const CategoryComponent: React.FC = () => {
         }
       } catch (error) {
         console.error('Error fetching categories', error);
+        setError('Failed to fetch categories. Please try again.');
       }
     };
 
@@ -35,8 +42,9 @@ const CategoryComponent: React.FC = () => {
   return (
     <div>
       <h1 className='text-center font-bold text-2xl mt-3'>Choose Categories</h1>
+      {error && <p className="text-red-500">{error}</p>}
       <ul>
-        {Array.isArray(categories) && categories.map((category) => (
+        {categories.map((category) => (
           <li key={category._id} className='border p-3 w-2/4 m-6 shadow-md rounded-md flex justify-between items-center'>
             {category.name}
             <Link to={`/categories/${category._id}/tasks`}>
