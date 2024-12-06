@@ -12,28 +12,30 @@ const CategoryComponent: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const authToken = localStorage.getItem('authToken');  // Fetch the newly received token
-        if (!authToken) {
-          throw new Error('No auth token found');
-        }
+    const fetchCategories = () => {
+      const authToken = localStorage.getItem('authToken');  // Fetch the newly received token
+      if (!authToken) {
+        throw new Error('No auth token found');
+      }
 
-        const { data } = await axios.get(`${import.meta.env.REACT_APP_API_URL}/api/categories`, {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        });
+      console.log("Retrieved Token for Request:", authToken);
 
-        if (Array.isArray(data)) {
-          setCategories(data);
+      axios.get(`${import.meta.env.REACT_APP_API_URL}/api/categories`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      .then((response) => {
+        if (Array.isArray(response.data)) {
+          setCategories(response.data);
         } else {
-          console.error('Data is not an array:', data);
+          console.error('Data is not an array:', response.data);
         }
-      } catch (error) {
+      })
+      .catch((error) => {
         console.error('Error fetching categories', error);
         setError('Failed to fetch categories. Please try again.');
-      }
+      });
     };
 
     fetchCategories();

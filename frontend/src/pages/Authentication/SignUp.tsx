@@ -13,6 +13,7 @@ const SignUp = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
 
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -26,6 +27,10 @@ const SignUp = () => {
         setIsRegistering(true);
         const userCredential = await doCreateUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
+        const idToken = await user.getIdToken();
+        console.log("Id Token:", idToken);
+
+        localStorage.setItem('authToken', idToken);
 
         console.log("Sign up initiated");
         await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/signup`, { 
@@ -33,6 +38,7 @@ const SignUp = () => {
           email: email,
           uid: user.uid
         });
+       
         console.log('User Successfully Created!');
       }
     } catch (error) {

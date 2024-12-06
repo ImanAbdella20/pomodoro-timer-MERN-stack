@@ -8,6 +8,7 @@ import categoryRoute from './routes/categoryRoute.js';
 dotenv.config();
 const app = express()
 
+
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -20,7 +21,11 @@ app.use('/api', categoryRoute)
 
 const connectDB = async() => {
     try {
-        await mongoose.connect(process.env.CONNECTION_STRING)
+        await mongoose.connect(process.env.CONNECTION_STRING , {
+             useNewUrlParser: true, 
+             useUnifiedTopology: true,
+            ssl: true, 
+        })
         console.log("Database Connected Successfully!");
     } catch (error) {
         console.log("Database Connection Error", error);

@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../context/authContext';
 import { doSignInUserWithEmailAndPassword } from '../../firebase/auth';
-import axios from 'axios';
 import { onGoogleSignIn } from './googleLogin';
-import { Link } from 'react-router-dom'; // Ensure you import Link for navigation
+import { Link } from 'react-router-dom';
 
 const Login = () => {
-  const authContext = useAuth();
-
-  if (!authContext) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signingIn, setSigningIn] = useState(false);
@@ -30,11 +22,8 @@ const Login = () => {
         const idToken = await user.getIdToken();
         console.log("Id Token:", idToken);
         
-        //set token to local storage
+        // Store token in local storage
         localStorage.setItem('authToken', idToken);
-
-        // Send token to backend
-        await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/login`, { email, idToken });
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -46,30 +35,49 @@ const Login = () => {
   };
 
   return (
-    <div className='flex items-center justify-center min-h-screen bg-customGreen'>
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow-md">
-        <h1 className="text-2xl mb-4">Login</h1>
-        <input
-          type="email"
-          placeholder='Enter your email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full mb-3 p-2 border rounded"
-        />
-        <input
-          type="password"
-          placeholder='Enter your password'
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="w-full mb-3 p-2 border rounded"
-        />
-        {error && <div className="text-red-500 mb-3">{error}</div>}
-        <button type="submit" disabled={signingIn} className="bg-blue-500 text-white p-2 rounded w-full mb-3">Sign In</button>
-        <button onClick={(e) => onGoogleSignIn(e, signingIn, setSigningIn, setError)} disabled={signingIn} className="bg-red-500 text-white p-2 rounded w-full">Sign In with Google</button>
-        <p className="mt-3 text-sm">Don't have an account? <Link to="/signup" className="text-blue-500">Sign up here</Link></p>
-      </form>
+    <div className='flex justify-center items-center bg-customGreen min-h-screen'>
+      <div className='p-8 max-w-md bg-white rounded-md'>
+        <h1 className='text-center mb-8 text-black font-sans font-bold text-2xl'>Login</h1>
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder='Enter Email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className='w-full mb-5 h-9 rounded-md pl-3 border border-black'
+          />
+          <input
+            type="password"
+            placeholder='Enter Password'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className='w-full mb-5 h-9 rounded-md pl-3 border border-black'
+          />
+          <button 
+            type="submit" 
+            disabled={signingIn} 
+            className='bg-customGreen w-full h-9 rounded-md text-white border border-black'
+          >
+            Sign In
+          </button>
+          <h6 className='font-light m-3 text-sm'>Don't have an account? <Link to="/signup" className='text-customGreen'>Sign up here</Link></h6>
+          <div className='flex'>
+            <hr className='w-48 mt-3 mb-3' /> 
+            <span className='ml-6 mr-6 mb-3'>or</span> 
+            <hr className='w-48 mt-3' />
+          </div>
+          <button
+            className='bg-customGreen w-full h-9 rounded-md text-white'
+            onClick={(e) => onGoogleSignIn(e, signingIn, setSigningIn, setError)}
+            disabled={signingIn}
+          > 
+            <i className='fab fa-google'></i> Login with Google
+          </button>
+        </form>
+        {error && <p className='text-red-500'>{error}</p>}
+      </div>
     </div>
   );
 };
