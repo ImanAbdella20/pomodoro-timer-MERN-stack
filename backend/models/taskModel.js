@@ -11,14 +11,10 @@ const taskModel = mongoose.Schema({
         ref: "Category", 
         required: true 
     },
-    title: { 
+    taskName: { 
         type: String, 
         required: true 
     }, 
-    description: { 
-        type: String, 
-        required: false 
-    },
     status:{
         type:String,
         enum:['pending' , 'in progress', 'completed'],

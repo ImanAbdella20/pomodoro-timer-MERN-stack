@@ -3,17 +3,25 @@
 @tailwind components;
 @tailwind utilities;
 
-.nav-link::after{
-    content:"";
+body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/productive.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Navigation link underline effect */
+.nav-link::after {
+    content: "";
     position: absolute;
-    bottom:-3px;
-    left: 0; 
+    bottom: -3px;
+    left: 0;
     width: 0;
-     height: 2px; 
-     background-color: white; 
-     transition: width 0.3s ease; 
-    } 
-    
+    height: 2px;
+    background-color: white;
+    transition: width 0.3s ease;
+}
+
 .nav-link:hover::after {
-     width: 100%;
-    }
+    width: 100%;
+}

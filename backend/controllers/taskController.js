@@ -2,10 +2,10 @@ import { Task } from "../models/taskModel.js";
 
 export const addTask = async(req,res) => {
 
-    const { tasks, status, creationDate , priority, estimatedPomodoros , shortBreak , longBreak  } = req.body;
+    const { taskName, status, creationDate , priority, estimatedPomodoros , shortBreak , longBreak  } = req.body;
     const newTask = new Task({
         user: req.user._id,
-        tasks, 
+        taskName, 
         status, 
         creationDate ,
          priority, 
@@ -62,3 +62,6 @@ const { id } = req.params;
     }
 }
 
+export const taskByCategory = async(req,res)=>{
+
+}

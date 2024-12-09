@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {motion } from 'framer-motion';
+import { FaTasks , FaLaptop , FaPenAlt , FaPaperclip , FaUser , FaSpa , FaHome , FaMoneyBillAlt , FaPeopleCarry} from 'react-icons/fa';
+import { IconType } from 'react-icons/lib';
+
+type CategoryIconMap = { 
+  [key: string]: IconType; 
+}; 
+const categoryIconMap: CategoryIconMap = {
+  'Project':FaLaptop, 
+  'Study':FaPenAlt, 
+  'Work':FaPaperclip , 
+   'Personal':FaUser, 
+   'Health':FaSpa , 
+  'Household':FaHome , 
+   'Finances':FaMoneyBillAlt , 
+ 'Social':FaPeopleCarry , 
+'Errands':FaTasks 
+}
 
 type Category = {
   _id: string;
@@ -10,6 +28,7 @@ type Category = {
 const CategoryComponent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = () => {
@@ -41,19 +60,34 @@ const CategoryComponent: React.FC = () => {
     fetchCategories();
   }, []);
 
+  const itemVariants = { 
+    hidden: { opacity: 0, scale: 0.8 }, 
+    visible: { opacity: 1, scale: 1 } 
+  };
   return (
     <div>
       <h1 className='text-center font-bold text-2xl mt-3'>Choose Categories</h1>
       {error && <p className="text-red-500">{error}</p>}
-      <ul>
-        {categories.map((category) => (
-          <li key={category._id} className='border p-3 w-2/4 m-6 shadow-md rounded-md flex justify-between items-center'>
+      <ul className='flex flex-wrap'>
+        {categories.map((category) =>{
+          const Icon = categoryIconMap[category.name] || FaTasks;
+
+        return(
+          <motion.li 
+          key={category._id} 
+          whileHover={{scale:1.1,rotate:2}}
+          whileTap={{scale:0.95}}
+          variants={itemVariants}
+          className='border p-3 w-2/4 m-6 shadow-md rounded-md flex justify-between items-center text-white '
+          transition = {{type:'spring' , stiffness:300}}
+          onClick={() => navigate(`/category/${category._id}/tasks`)}
+          >
+            <Icon className='text-white mr-2'/>
             {category.name}
-            <Link to={`/categories/${category._id}/tasks`}>
-              <span className='text-blue-600 text-xl'>&gt;</span>
-            </Link>
-          </li>
-        ))}
+              <span className='text-white text-xl'>&gt;</span>
+          </motion.li>
+        )
+})}
       </ul>
     </div>
   );

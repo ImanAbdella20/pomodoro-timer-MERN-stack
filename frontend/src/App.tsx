@@ -7,8 +7,9 @@ import Header from './components/header/Header';
 import Login from './pages/Authentication/Login';
 import SignUp from './pages/Authentication/SignUp';
 import Category from './pages/Category/Category';
-import Tasks from './pages/tasks/Tasks';
+import Tasks from './pages/tasks/TaskForm';
 import Track from './pages/track/Track';
+import TaskComponent from './pages/tasks/TaskComponent';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -30,7 +31,7 @@ const App: React.FC = () => {
             <button onClick={() => doSignOut()}>Sign Out</button>
             <Routes>
               <Route path="/category" element={<Category />} />
-              <Route path="/tasks" element={<Tasks />} />
+              <Route path="/category/:categoryId/tasks" element={<TaskComponent />} />
               <Route path="/track" element={<Track />} />
               <Route path="*" element={<Navigate to="/category" />}/> 
             </Routes>
