@@ -62,6 +62,13 @@ const { id } = req.params;
     }
 }
 
-export const taskByCategory = async(req,res)=>{
-
-}
+export const getTasksByCategory = async (req, res) => {
+    const { category } = req.query;
+    try {
+      const tasks = await Task.find({ category });
+      return res.status(200).json(tasks);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
+  };
+  

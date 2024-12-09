@@ -1,10 +1,11 @@
 import express from 'express';
-import { addTask, deleteTask, updateTask } from '../controllers/taskController';
+import { addTask, deleteTask, getTasksByCategory, updateTask } from '../controllers/taskController';
+import { validateFirebaseToken } from '../middleware/authMiddleware';
 
 const taskRoute = express.Router();
-taskRoute.post('/add' , addTask);
-taskRoute.put('/update/:id', updateTask );
-taskRoute.delete('/delete/:id', deleteTask);
-taskRoute.get('/', )
+taskRoute.post('/add' , validateFirebaseToken, addTask);
+taskRoute.put('/update/:id',validateFirebaseToken, updateTask );
+taskRoute.delete('/delete/:id',validateFirebaseToken, deleteTask);
+taskRoute.get('/',validateFirebaseToken, getTasksByCategory )
 
 export default taskRoute;
