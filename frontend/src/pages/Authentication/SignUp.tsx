@@ -89,7 +89,7 @@ const SignUp = () => {
           >
             Sign Up
           </button>
-          <h6 className='font-light m-3 text-sm'>Already have an account? <Link to="/login" className='bg-slate-700'>Login here</Link></h6>
+          <h6 className='font-light m-3 text-sm'>Already have an account? <Link to="/login" className='text-slate-700'>Login here</Link></h6>
           <div className='flex'>
             <hr className='w-48 mt-3 mb-3' /> 
             <span className='ml-6 mr-6 mb-3'>or</span> 

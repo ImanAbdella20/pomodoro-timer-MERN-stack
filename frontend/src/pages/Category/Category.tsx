@@ -82,7 +82,7 @@ const CategoryComponent: React.FC = () => {
           transition = {{type:'spring' , stiffness:300}}
           onClick={() => navigate(`/category/${category._id}/tasks`)}
           >
-            <Icon className='text-white mr-2'/>
+            <Icon className='text-white mr-2 ' />
             {category.name}
               <span className='text-white text-xl cursor-pointer'>&gt;</span>
           </motion.li>
