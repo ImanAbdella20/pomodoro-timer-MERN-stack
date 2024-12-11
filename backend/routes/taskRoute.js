@@ -1,6 +1,6 @@
 import express from 'express';
-import { addTask, deleteTask, getTasksByCategory, updateTask } from '../controllers/taskController';
-import { validateFirebaseToken } from '../middleware/authMiddleware';
+import { addTask, deleteTask, getTasksByCategory, updateTask } from '../controllers/taskController.js';
+import { validateFirebaseToken } from '../middleware/authMiddleware.js';
 
 const taskRoute = express.Router();
 taskRoute.post('/add' , validateFirebaseToken, addTask);

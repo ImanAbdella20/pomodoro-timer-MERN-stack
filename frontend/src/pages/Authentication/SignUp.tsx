@@ -33,7 +33,7 @@ const SignUp = () => {
         localStorage.setItem('authToken', idToken);
 
         console.log("Sign up initiated");
-        await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/signup`, { 
+        await axios.post(`${import.meta.env.REACT_APP_API_URL}/auth/signup`, { 
           username: userName,
           email: email,
           uid: user.uid
@@ -50,7 +50,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className='flex justify-center items-center bg-customGreen min-h-screen'>
+    <div className='flex justify-center items-center bg-slate-700 min-h-screen'>
       <div className='p-8 max-w-md bg-white rounded-md'>
         <h1 className='text-center mb-8 text-black font-sans font-bold text-2xl'>Sign Up</h1>
         <form onSubmit={handleSignUp}>
@@ -85,24 +85,24 @@ const SignUp = () => {
           <button 
             type="submit" 
             disabled={isRegistering} 
-            className='bg-customGreen w-full h-9 rounded-md text-white border border-black'
+            className='bg-slate-700 w-full h-9 rounded-md text-white border border-black'
           >
             Sign Up
           </button>
-          <h6 className='font-light m-3 text-sm'>Already have an account? <Link to="/login" className='text-customGreen'>Login here</Link></h6>
+          <h6 className='font-light m-3 text-sm'>Already have an account? <Link to="/login" className='bg-slate-700'>Login here</Link></h6>
           <div className='flex'>
             <hr className='w-48 mt-3 mb-3' /> 
             <span className='ml-6 mr-6 mb-3'>or</span> 
             <hr className='w-48 mt-3' />
           </div>
           <button
-            className='bg-customGreen w-full h-9 rounded-md text-white'
+            className='bg-slate-700 w-full h-9 rounded-md text-white'
             onClick={(e) => onGoogleSignIn(e, isRegistering, setIsRegistering, setError)}
           > 
             <i className='fab fa-google'></i> Login with Google
           </button>
         </form>
-        {error && <p className='text-red-500'>{error}</p>}
+        {error && <p className='bg-slate-700'>{error}</p>}
       </div>
     </div>
   );

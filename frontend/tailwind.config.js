@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors:{
-        customGreen: "#db2777",
+        customColor: "bg-slate-700",
       },
       backgroundImage: {
         'custom-gradient': 'linear-gradient(to right, #db2777, #e879f9)',

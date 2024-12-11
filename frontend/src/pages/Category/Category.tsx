@@ -39,7 +39,7 @@ const CategoryComponent: React.FC = () => {
 
       console.log("Retrieved Token for Request:", authToken);
 
-      axios.get(`${import.meta.env.REACT_APP_API_URL}/api/categories`, {
+      axios.get(`${import.meta.env.REACT_APP_API_URL}/category/categories`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -66,7 +66,7 @@ const CategoryComponent: React.FC = () => {
   };
   return (
     <div>
-      <h1 className='text-center font-bold text-2xl mt-3'>Choose Categories</h1>
+      <h1 className='text-center font-bold text-2xl mt-3 text-white'>Choose Categories</h1>
       {error && <p className="text-red-500">{error}</p>}
       <ul className='flex flex-wrap'>
         {categories.map((category) =>{
@@ -78,13 +78,13 @@ const CategoryComponent: React.FC = () => {
           whileHover={{scale:1.1,rotate:2}}
           whileTap={{scale:0.95}}
           variants={itemVariants}
-          className='border p-3 w-2/4 m-6 shadow-md rounded-md flex justify-between items-center text-white '
+          className='border p-3 w-2/4 m-6 shadow-md rounded-md flex justify-between items-center text-white cursor-pointer '
           transition = {{type:'spring' , stiffness:300}}
           onClick={() => navigate(`/category/${category._id}/tasks`)}
           >
             <Icon className='text-white mr-2'/>
             {category.name}
-              <span className='text-white text-xl'>&gt;</span>
+              <span className='text-white text-xl cursor-pointer'>&gt;</span>
           </motion.li>
         )
 })}

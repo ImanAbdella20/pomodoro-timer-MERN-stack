@@ -7,7 +7,7 @@ export const validateFirebaseToken = asyncHandler(async (req, res, next) => {
     const idToken = authHeader.split(" ")[1];
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
-      req.user = decodedToken;
+      req.user = { _id: decodedToken.uid}
       console.log("Decoded JWT payload:", req.user); // Log decoded token
       next();
     } catch (error) {

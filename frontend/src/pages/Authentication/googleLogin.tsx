@@ -22,7 +22,7 @@ export const onGoogleSignIn = async (
         localStorage.setItem('authToken', idToken);
     
         // Send token to backend
-       await axios.post(`${import.meta.env.REACT_APP_API_URL}/api/login`, { email: user.email, idToken });
+       await axios.post(`${import.meta.env.REACT_APP_API_URL}/auth/login`, { email: user.email, idToken });
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);

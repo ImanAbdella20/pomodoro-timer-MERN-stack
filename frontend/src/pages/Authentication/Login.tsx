@@ -35,7 +35,7 @@ const Login = () => {
   };
 
   return (
-    <div className='flex justify-center items-center bg-customGreen min-h-screen'>
+    <div className='flex justify-center items-center bg-slate-700 min-h-screen'>
       <div className='p-8 max-w-md bg-white rounded-md'>
         <h1 className='text-center mb-8 text-black font-sans font-bold text-2xl'>Login</h1>
         <form onSubmit={handleLogin}>
@@ -58,25 +58,25 @@ const Login = () => {
           <button 
             type="submit" 
             disabled={signingIn} 
-            className='bg-customGreen w-full h-9 rounded-md text-white border border-black'
+            className='bg-slate-700 w-full h-9 rounded-md text-white border border-black'
           >
             Sign In
           </button>
-          <h6 className='font-light m-3 text-sm'>Don't have an account? <Link to="/signup" className='text-customGreen'>Sign up here</Link></h6>
+          <h6 className='font-light m-3 text-sm'>Don't have an account? <Link to="/signup" className='text-slate-700'>Sign up here</Link></h6>
           <div className='flex'>
             <hr className='w-48 mt-3 mb-3' /> 
             <span className='ml-6 mr-6 mb-3'>or</span> 
             <hr className='w-48 mt-3' />
           </div>
           <button
-            className='bg-customGreen w-full h-9 rounded-md text-white'
+            className='bg-slate-700 w-full h-9 rounded-md text-white'
             onClick={(e) => onGoogleSignIn(e, signingIn, setSigningIn, setError)}
             disabled={signingIn}
           > 
             <i className='fab fa-google'></i> Login with Google
           </button>
         </form>
-        {error && <p className='text-red-500'>{error}</p>}
+        {error && <p className='bg-slate-700'>{error}</p>}
       </div>
     </div>
   );
