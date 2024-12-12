@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import cors from 'cors'; 
 import categoryRoute from './routes/categoryRoute.js';
 import taskRoute from './routes/taskRoute.js';
+import sessionRoute from './routes/sessionRoute.js';
 
 dotenv.config();
 const app = express()
@@ -18,7 +19,8 @@ app.use(cors());
 // api
 app.use('/auth', authRoute);
 app.use('/category', categoryRoute);
-app.use('/tasks' , taskRoute)
+app.use('/tasks' , taskRoute);
+app.use('/session',sessionRoute);
 
 
 const connectDB = async() => {

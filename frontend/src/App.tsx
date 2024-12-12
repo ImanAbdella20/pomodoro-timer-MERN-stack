@@ -8,7 +8,7 @@ import Login from './pages/Authentication/Login';
 import SignUp from './pages/Authentication/SignUp';
 import Category from './pages/Category/Category';
 import Tasks from './pages/tasks/TaskForm';
-import Track from './pages/track/Track';
+import Track from './pages/track/TimerComponent';
 import TaskComponent from './pages/tasks/TaskComponent';
 
 const App: React.FC = () => {

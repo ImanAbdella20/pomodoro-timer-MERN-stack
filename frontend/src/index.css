@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 body {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/productive.jpg');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/productive.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -55,6 +55,102 @@ body {
       transform: translateY(0);
     }
   }
+
+  .timer-component {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .timer-component h1 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .pomodoro-status {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .circular-progress {
+    margin-bottom: 1.5rem;
+  }
+  
+  .circular-progress svg {
+    width: 8rem; /* 128px */
+    height: 8rem; /* 128px */
+  }
+  
+  .circular-progress circle {
+    stroke: #dc2626; /* #red-500 */
+  }
+  
+  .circular-progress text {
+    fill: white /* #gray-700 */
+  }
+  
+  .timer-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .timer-buttons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 2rem; /* Adjust icon size */
+  }
+  
+  .timer-buttons button:hover {
+    color: #2563eb; /* #blue-500 */
+  }
+  
+  .timer-buttons button:active {
+    color: #1d4ed8; /* #blue-700 */
+  }
+  
+  .length-controls {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .session-control,
+  .break-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .session-control div,
+  .break-control div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .session-control button,
+  .break-control button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem; /* Adjust icon size */
+  }
+  
+  .session-control button:hover,
+  .break-control button:hover {
+    color: #6b7280; /* #gray-500 */
+  }
+  
+  .session-control button:active,
+  .break-control button:active {
+    color: #4b5563; /* #gray-700 */
+  }
+  
 
 
   

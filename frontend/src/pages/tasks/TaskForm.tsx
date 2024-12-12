@@ -82,18 +82,6 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose }) => {
           onChange={(e) => setTaskName(e.target.value)}
         />
 
-        <label htmlFor="status" className="block mb-1">Status:</label>
-        <select
-          id="status"
-          className="task-select border p-2 rounded mb-2 w-full"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-        >
-          <option value="pending">Pending</option>
-          <option value="in progress">In Progress</option>
-          <option value="completed">Completed</option>
-        </select>
-
         <label htmlFor="priority" className="block mb-1">Priority:</label>
         <select
           id="priority"

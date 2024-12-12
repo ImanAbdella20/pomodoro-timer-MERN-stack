@@ -105,9 +105,6 @@ const TaskComponent = () => {
                     <button onClick={() => handlePause(task._id)} className="text-yellow-500 hover:text-yellow-700">
                       <FaPause />
                     </button>
-                    <button onClick={() => handleStart(task._id)} className="text-green-500 hover:text-green-700">
-                      <FaPlay />
-                    </button>
                     <button onClick={() => handleDelete(task._id)} className="text-red-500 hover:text-red-700">
                       <FaTrash />
                     </button>
