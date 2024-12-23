@@ -1,24 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaPlay, FaPause, FaRedo, FaMinus, FaPlus } from 'react-icons/fa';
-import axios from 'axios';
+import { useTimer } from '../../context/TimerContext';
 
-interface TaskType {
-  _id: string;
-  taskName: string;
-  status: string;
-}
-
-interface TimerComponentProps {
-  selectedTask: TaskType | null;
-}
-
-const TimerComponent: React.FC<TimerComponentProps> = ({ selectedTask }) => {
+const TimerComponent: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(1500); // Default session time 25 minutes
   const [isRunning, setIsRunning] = useState(false);
   const [isBreak, setIsBreak] = useState(false);
   const [sessionLength, setSessionLength] = useState(25);
   const [breakLength, setBreakLength] = useState(5);
   const [pomodoroStatus, setPomodoroStatus] = useState('Session');
+  const { selectedTask } = useTimer();
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -66,12 +57,15 @@ const TimerComponent: React.FC<TimerComponentProps> = ({ selectedTask }) => {
 
   const handleBreakChange = (amount: number) => {
     setBreakLength((prev) => Math.max(1, prev + amount));
+    if (isBreak && !isRunning) {
+      setTimeLeft((prev) => Math.max(1, breakLength + amount) * 60);
+    }
   };
 
   const handleSessionChange = (amount: number) => {
     setSessionLength((prev) => Math.max(1, prev + amount));
-    if (!isRunning) {
-      setTimeLeft((prev) => Math.max(1, prev + amount) * 60);
+    if (!isBreak && !isRunning) {
+      setTimeLeft((prev) => Math.max(1, sessionLength + amount) * 60);
     }
   };
 
@@ -83,7 +77,9 @@ const TimerComponent: React.FC<TimerComponentProps> = ({ selectedTask }) => {
 
   useEffect(() => {
     if (selectedTask) {
-      setPomodoroStatus(selectedTask.status);
+      setPomodoroStatus('Session');
+      setTimeLeft(sessionLength * 60);
+      setIsRunning(true); // Start the timer when a task is selected
     }
   }, [selectedTask]);
 
@@ -102,7 +98,7 @@ const TimerComponent: React.FC<TimerComponentProps> = ({ selectedTask }) => {
             strokeWidth="2"
             fill="none"
             strokeDasharray="283"
-            strokeDashoffset={`${(1 - timeLeft / (isBreak ? breakLength : sessionLength) * 60) * 283}`}
+            strokeDashoffset={`${(1 - timeLeft / ((isBreak ? breakLength : sessionLength) * 60)) * 283}`}
             className="text-red-500"
           />
           <text x="50" y="50" textAnchor="middle" dy=".3em" fontSize="20" className="fill-current text-gray-700">
@@ -122,11 +118,11 @@ const TimerComponent: React.FC<TimerComponentProps> = ({ selectedTask }) => {
         <div className="session-control flex flex-col items-center">
           <div className="font-semibold">Session Length</div>
           <div className="flex items-center space-x-2">
-            <button onClick={() => handleSessionChange(-1)} className="text-gray-500 hover:text-gray-700">
+            <button onClick={() => handleSessionChange(-1)} className="text-white hover:text-gray-700">
               <FaMinus />
             </button>
             <span>{sessionLength}</span>
-            <button onClick={() => handleSessionChange(1)} className="text-gray-500 hover:text-gray-700">
+            <button onClick={() => handleSessionChange(1)} className="text-white hover:text-gray-700">
               <FaPlus />
             </button>
           </div>
@@ -134,11 +130,11 @@ const TimerComponent: React.FC<TimerComponentProps> = ({ selectedTask }) => {
         <div className="break-control flex flex-col items-center">
           <div className="font-semibold">Break Length</div>
           <div className="flex items-center space-x-2">
-            <button onClick={() => handleBreakChange(-1)} className="text-gray-500 hover:text-gray-700">
+            <button onClick={() => handleBreakChange(-1)} className="text-white hover:text-gray-700">
               <FaMinus />
             </button>
             <span>{breakLength}</span>
-            <button onClick={() => handleBreakChange(1)} className="text-gray-500 hover:text-gray-700">
+            <button onClick={() => handleBreakChange(1)} className="text-white hover:text-gray-700">
               <FaPlus />
             </button>
           </div>

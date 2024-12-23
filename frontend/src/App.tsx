@@ -10,6 +10,7 @@ import Category from './pages/Category/Category';
 import Tasks from './pages/tasks/TaskForm';
 import Track from './pages/track/TimerComponent';
 import TaskComponent from './pages/tasks/TaskComponent';
+import { TimerProvider } from './context/TimerContext';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -23,6 +24,8 @@ const App: React.FC = () => {
   }, []);
 
   return (
+
+    < TimerProvider>
     <Router>
       <div>
         {user ? (
@@ -45,6 +48,7 @@ const App: React.FC = () => {
         )}
       </div>
     </Router>
+    </TimerProvider>
   );
 };
 

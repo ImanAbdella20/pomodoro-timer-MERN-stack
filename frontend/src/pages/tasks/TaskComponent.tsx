@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 import Tasks from './TaskForm';
 import { FaTasks, FaEdit, FaPlay, FaPause, FaTrash } from 'react-icons/fa';
+import { useTimer } from '../../context/TimerContext';
 
 interface TasksType {
   _id: string;
@@ -19,6 +20,8 @@ const TaskComponent = () => {
   const [tasks, setTasks] = useState<TasksType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const { setSelectedTask } = useTimer();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -39,7 +42,7 @@ const TaskComponent = () => {
 
         setTasks(response.data);
       } catch (error) {
-        console.error('Error fetching categories', error);
+        console.error('Error fetching tasks', error);
       }
     };
 
@@ -60,28 +63,21 @@ const TaskComponent = () => {
   };
 
   const handleEdit = (taskId: string) => {
-    // Implement edit functionality
     console.log(`Edit task ${taskId}`);
   };
 
-  const handlePause = (taskId: string) => {
-    // Implement pause functionality
-    console.log(`Pause task ${taskId}`);
-  };
-
-  const handleStart = (taskId: string) => {
-    // Implement start functionality
-    console.log(`Start task ${taskId}`);
+  const handleStart = (task: TasksType) => {
+    setSelectedTask(task); // Set the selected task to start the timer
+    navigate('/track'); // Navigate to the TimerComponent (Track) page
   };
 
   const handleDelete = (taskId: string) => {
-    // Implement delete functionality
     console.log(`Delete task ${taskId}`);
   };
 
   return (
     <div className="task-component max-w-lg mx-auto">
-      <h1 className='text-center font-bold text-2xl text-white mb-7'>My Tasks</h1>
+      <h1 className="text-center font-bold text-2xl text-white mb-7">My Tasks</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div>
         {showForm && categoryId && (
@@ -92,18 +88,23 @@ const TaskComponent = () => {
         ) : (
           <ul className="task-list grid grid-cols-1 gap-4">
             {tasks.map((task) => (
-              <li key={task._id} className="task-item bg-white p-4 rounded-lg shadow-lg border border-gray-300 relative">
+              <li 
+              key={task._id} 
+              className="task-item bg-opacity-50 p-4 rounded-lg shadow-lg border border-gray-300 relative cursor-pointer"
+              onClick={() => handleStart(task)}
+              >
                 <div className="flex items-center">
                   <FaTasks className="mr-2" />
-                  <h2 className="font-bold text-xl text-black">{task.taskName}</h2>
+                  <h2 
+                    className="font-bold text-xl text-white"
+                  >
+                    {task.taskName}
+                  </h2>
                 </div>
                 <div className="icons absolute right-2 top-2 flex space-x-2">
                   <div className="flex space-x-2">
                     <button onClick={() => handleEdit(task._id)} className="text-blue-500 hover:text-blue-700">
                       <FaEdit />
-                    </button>
-                    <button onClick={() => handlePause(task._id)} className="text-yellow-500 hover:text-yellow-700">
-                      <FaPause />
                     </button>
                     <button onClick={() => handleDelete(task._id)} className="text-red-500 hover:text-red-700">
                       <FaTrash />
@@ -115,7 +116,7 @@ const TaskComponent = () => {
           </ul>
         )}
       </div>
-      <button onClick={toggleShowForm} className='pl-14 pr-14 pt-3 pb-3 bg-slate-700 rounded-md text-5xl mt-9'>
+      <button onClick={toggleShowForm} className="pl-14 pr-14 pt-3 pb-3 bg-slate-700 rounded-md text-5xl mt-9">
         {showForm ? 'Hide Form' : '+'}
       </button>
     </div>

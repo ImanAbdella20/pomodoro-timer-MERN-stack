@@ -12,10 +12,10 @@ const Header = () => {
       <Link to="/category" className='text-white mr-12 cursor-pointer relative nav-link'>Tasks</Link>
       <Link to="/track" className='text-white mr-12 cursor-pointer relative nav-link'>Track</Link>
       <Link to="" className='text-white mr-12 cursor-pointer relative nav-link'>Statstics</Link>
+      <Link to="/signup" className='text-white mr-12 cursor-pointer relative nav-link'>Sign In</Link>
       </div>
-
+      <hr className='m-4 '/>
       <i className=''></i>
-      
     </div>
   )
 }

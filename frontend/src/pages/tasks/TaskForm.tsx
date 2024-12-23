@@ -68,8 +68,10 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose }) => {
   return (
     <div className="tasks-overlay relative z-10 ">
       <div className="tasks-form bg-white p-6 rounded-lg shadow-lg w-1/3 ">
+      <span onClick={onClose} className="cursor-pointer text-gray-500 hover:text-gray-700 absolute right-7 text-red-500 font-bold text-xl">&times;</span>
         <h1 className="text-xl font-bold mb-4">Add Your Tasks</h1>
-        <span onClick={onClose} className="cursor-pointer text-gray-500 hover:text-gray-700 absolute right-7 text-red-500 font-bold text-xl">&times;</span>
+        <hr />
+
         {error && <p className="text-red-500">{error}</p>}
         
         <label htmlFor="taskName" className="block mb-1">Task Name:</label>
@@ -102,26 +104,6 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose }) => {
           placeholder="Estimated Pomodoros"
           value={estimatedPomodoros}
           onChange={(e) => setEstimatedPomodoros(Number(e.target.value))}
-        />
-
-        <label htmlFor="shortBreak" className="block mb-1">Short Break (minutes):</label>
-        <input
-          id="shortBreak"
-          className="task-input border p-2 rounded mb-2 w-full"
-          type="number"
-          placeholder="Short Break"
-          value={shortBreak}
-          onChange={(e) => setShortBreak(Number(e.target.value))}
-        />
-
-        <label htmlFor="longBreak" className="block mb-1">Long Break (minutes):</label>
-        <input
-          id="longBreak"
-          className="task-input border p-2 rounded mb-2 w-full"
-          type="number"
-          placeholder="Long Break"
-          value={longBreak}
-          onChange={(e) => setLongBreak(Number(e.target.value))}
         />
 
         <button
