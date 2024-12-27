@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { doSignInUserWithEmailAndPassword } from '../../firebase/auth';
 import { onGoogleSignIn } from './googleLogin';
 import { Link } from 'react-router-dom';
 
-const Login = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/category';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,6 +28,9 @@ const Login = () => {
         
         // Store token in local storage
         localStorage.setItem('authToken', idToken);
+        
+        // Redirect after successful login
+        navigate(from, { replace: true });
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -62,7 +69,7 @@ const Login = () => {
           >
             Sign In
           </button>
-          <h6 className='font-light m-3 text-sm'>Don't have an account? <Link to="/" className='text-slate-700'>Sign up here</Link></h6>
+          <h6 className='font-light m-3 text-sm'>Don't have an account? <Link to="/signup" className='text-slate-700'>Sign up here</Link></h6>
           <div className='flex'>
             <hr className='w-48 mt-3 mb-3' /> 
             <span className='ml-6 mr-6 mb-3'>or</span> 

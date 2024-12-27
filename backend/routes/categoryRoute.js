@@ -4,7 +4,7 @@ import { validateFirebaseToken } from '../middleware/authMiddleware.js';
 
 const categoryRoute = express.Router();
 
-categoryRoute.get('/categories' ,validateFirebaseToken,getCategories );
-categoryRoute.get('/category/:id' ,validateFirebaseToken,getCategoryById );
+categoryRoute.get('/categories' ,getCategories );
+categoryRoute.get('/category/:id' ,getCategoryById );
 
 export default categoryRoute;

@@ -32,16 +32,8 @@ const CategoryComponent: React.FC = () => {
 
   useEffect(() => {
     const fetchCategories = () => {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        throw new Error('No auth token found');
-      }
 
-      axios.get(`${import.meta.env.REACT_APP_API_URL}/category/categories`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
+      axios.get(`${import.meta.env.REACT_APP_API_URL}/category/categories`)
       .then((response) => {
         if (Array.isArray(response.data)) {
           setCategories(response.data);

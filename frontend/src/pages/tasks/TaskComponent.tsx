@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate } from 'react-router-dom';
 import Tasks from './TaskForm';
-import { FaTasks, FaEdit, FaPlay, FaPause, FaTrash } from 'react-icons/fa';
+import { FaTasks, FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
 import { useTimer } from '../../context/TimerContext';
 
 interface TasksType {
@@ -15,7 +15,7 @@ interface TasksType {
   longBreak: number;
 }
 
-const TaskComponent = () => {
+const TaskComponent: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const [tasks, setTasks] = useState<TasksType[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ const TaskComponent = () => {
         }
 
         const response = await axios.get(
-          `${import.meta.env.REACT_APP_API_URL}/tasks/?category=${categoryId}`,
+          `${import.meta.env.VITE_REACT_APP_API_URL}/tasks?categoryId=${categoryId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -46,7 +46,9 @@ const TaskComponent = () => {
       }
     };
 
-    fetchTasks();
+    if (categoryId) {
+      fetchTasks();
+    }
   }, [categoryId]);
 
   const handleTaskAdded = (newTask: TasksType) => {
@@ -67,8 +69,8 @@ const TaskComponent = () => {
   };
 
   const handleStart = (task: TasksType) => {
-    setSelectedTask(task); // Set the selected task to start the timer
-    navigate('/track'); // Navigate to the TimerComponent (Track) page
+    setSelectedTask(task); 
+    navigate('/track'); 
   };
 
   const handleDelete = (taskId: string) => {
@@ -84,20 +86,18 @@ const TaskComponent = () => {
           <Tasks categoryId={categoryId} onTaskAdded={handleTaskAdded} onClose={toggleClose} />
         )}
         {tasks.length === 0 ? (
-          <p className="text-center text-gray-500">No tasks added.</p>
+          <p className="text-center text-red-500">No tasks added.</p>
         ) : (
           <ul className="task-list grid grid-cols-1 gap-4">
             {tasks.map((task) => (
-              <li 
-              key={task._id} 
-              className="task-item bg-opacity-50 p-4 rounded-lg shadow-lg border border-gray-300 relative cursor-pointer"
-              onClick={() => handleStart(task)}
+              <li
+                key={task._id}
+                className="task-item bg-opacity-50 p-4 rounded-lg shadow-lg border border-gray-300 relative cursor-pointer"
+                onClick={() => handleStart(task)}
               >
                 <div className="flex items-center">
                   <FaTasks className="mr-2" />
-                  <h2 
-                    className="font-bold text-xl text-white"
-                  >
+                  <h2 className="font-bold text-xl text-white">
                     {task.taskName}
                   </h2>
                 </div>
