@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Tasks from './TaskForm';
-import { FaTasks, FaEdit, FaPlay, FaTrash } from 'react-icons/fa';
+import { FaRegCircle, FaCheckCircle, FaEllipsisV } from 'react-icons/fa';
 import { useTimer } from '../../context/TimerContext';
 
 interface TasksType {
@@ -32,7 +32,7 @@ const TaskComponent: React.FC = () => {
         }
 
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/tasks?categoryId=${categoryId}`,
+          `${import.meta.env.REACT_APP_API_URL}/tasks?category=${categoryId}`,
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -40,9 +40,16 @@ const TaskComponent: React.FC = () => {
           }
         );
 
-        setTasks(response.data);
+        console.log('API response:', response.data);
+
+        if (Array.isArray(response.data)) {
+          setTasks(response.data);
+        } else {
+          throw new Error('Unexpected response format');
+        }
       } catch (error) {
         console.error('Error fetching tasks', error);
+        setError('Error fetching tasks');
       }
     };
 
@@ -52,7 +59,8 @@ const TaskComponent: React.FC = () => {
   }, [categoryId]);
 
   const handleTaskAdded = (newTask: TasksType) => {
-    setTasks([...tasks, newTask]);
+    const taskWithPendingStatus: TasksType = { ...newTask, status: 'pending' };
+    setTasks((prevTasks) => [...prevTasks, taskWithPendingStatus]);
     setShowForm(false);
   };
 
@@ -69,13 +77,61 @@ const TaskComponent: React.FC = () => {
   };
 
   const handleStart = (task: TasksType) => {
-    setSelectedTask(task); 
-    navigate('/track'); 
+    setSelectedTask(task);
+    navigate('/track');
   };
 
   const handleDelete = (taskId: string) => {
     console.log(`Delete task ${taskId}`);
   };
+
+  const toggleTaskCompletion = async (task: TasksType) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        throw new Error('No auth token found');
+      }
+  
+      // Toggle the task status
+      const updatedStatus = task.status === 'completed' ? 'pending' : 'completed';
+      const updatedTask: TasksType = { ...task, status: updatedStatus };
+  
+      // Optimistically update the task status in the state
+      setTasks((prevTasks) =>
+        prevTasks.map((t) =>
+          t._id === task._id ? updatedTask : t
+        )
+      );
+  
+      // Send the updated status to the server
+      const response = await axios.put(
+        `${import.meta.env.REACT_APP_API_URL}/tasks/update/${task._id}`,
+        updatedTask,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+  
+      // In case the server response is different, update the state again
+      const updatedTaskData: TasksType = response.data;
+      setTasks((prevTasks) =>
+        prevTasks.map((t) => (t._id === task._id ? updatedTaskData : t))
+      );
+    } catch (error) {
+      console.error('Error updating task status', error);
+    }
+  };
+
+  const editTask = async()=> {
+try {
+  
+} catch (error) {
+  
+}
+  }
+  
 
   return (
     <div className="task-component max-w-lg mx-auto">
@@ -85,7 +141,7 @@ const TaskComponent: React.FC = () => {
         {showForm && categoryId && (
           <Tasks categoryId={categoryId} onTaskAdded={handleTaskAdded} onClose={toggleClose} />
         )}
-        {tasks.length === 0 ? (
+        {Array.isArray(tasks) && tasks.length === 0 ? (
           <p className="text-center text-red-500">No tasks added.</p>
         ) : (
           <ul className="task-list grid grid-cols-1 gap-4">
@@ -93,24 +149,27 @@ const TaskComponent: React.FC = () => {
               <li
                 key={task._id}
                 className="task-item bg-opacity-50 p-4 rounded-lg shadow-lg border border-gray-300 relative cursor-pointer"
-                onClick={() => handleStart(task)}
               >
                 <div className="flex items-center">
-                  <FaTasks className="mr-2" />
-                  <h2 className="font-bold text-xl text-white">
+                  {task.status === 'completed' ? (
+                    <FaCheckCircle className="mr-2 cursor-pointer text-red-500" onClick={() => toggleTaskCompletion(task)} />
+                  ) : (
+                    <FaRegCircle className="mr-2 cursor-pointer" onClick={() => toggleTaskCompletion(task)} />
+                  )}
+                  <h2
+                    className={`font-bold text-xl text-white ${task.status === 'completed' ? 'line-through' : ''}`}
+                    onClick={() => handleStart(task)}
+                  >
                     {task.taskName}
                   </h2>
                 </div>
+                
                 <div className="icons absolute right-2 top-2 flex space-x-2">
                   <div className="flex space-x-2">
-                    <button onClick={() => handleEdit(task._id)} className="text-blue-500 hover:text-blue-700">
-                      <FaEdit />
-                    </button>
-                    <button onClick={() => handleDelete(task._id)} className="text-red-500 hover:text-red-700">
-                      <FaTrash />
-                    </button>
+                  <FaEllipsisV className='mt-4' onClick={() => editTask}/>
                   </div>
                 </div>
+                
               </li>
             ))}
           </ul>

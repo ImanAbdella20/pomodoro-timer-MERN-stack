@@ -11,6 +11,8 @@ import TaskComponent from './pages/tasks/TaskComponent';
 import { TimerProvider } from './context/TimerContext';
 import Statistics from '../src/pages/statstics/Statstics';
 import About from './pages/about/About';
+import Account from './pages/account/Account';
+import Setting from './pages/Setting/Setting';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -45,9 +47,11 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={<Category />} />
           <Route path="/about" element={<About />} />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
+          <Route path = "/signup" element = {<SignUp/>}/>
           <Route path="/category" element={<Category />} />
+          <Route path="/setting" element={< Setting/>} />
+          <Route path="/account" element={<Account user = {user}/>} />
           <Route
             path="/category/:categoryId/tasks"
             element={user ? <TaskComponent /> : <Navigate to="/login" state={{ from: location }} replace />}
