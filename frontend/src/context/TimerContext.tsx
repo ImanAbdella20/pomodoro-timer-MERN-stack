@@ -6,7 +6,9 @@ interface TimerContextType {
   selectedTask: TaskType | null;
   setSelectedTask: Dispatch<SetStateAction<TaskType | null>>;
   startTimer: () => void;
+  updateTask: (updatedTask: TaskType) => void; // New method
 }
+
 
 // Define the TaskType interface
 interface TaskType {
@@ -17,6 +19,7 @@ interface TaskType {
   estimatedPomodoros: number;
   shortBreak: number;
   longBreak: number;
+  actualPomodoros?: number;
 }
 
 // Define the TimerProvider props type
@@ -27,19 +30,27 @@ interface TimerProviderProps {
 // Create the context with default values
 const TimerContext = createContext<TimerContextType>({
   selectedTask: null,
-  setSelectedTask: () => {},
-  startTimer: () => {}
+  setSelectedTask: () => { },
+  startTimer: () => { },
+  updateTask: () => {},
 });
 
 export const TimerProvider: React.FC<TimerProviderProps> = ({ children }) => {
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
-  const [isRunning , setIsRunning] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
 
-  const startTimer = () => { 
+  const startTimer = () => {
     setIsRunning(true);
   };
+
+  const updateTask = (updatedTask: TaskType) => {
+    if (selectedTask?._id === updatedTask._id) {
+      setSelectedTask(updatedTask);
+    }
+  };
+
   return (
-    <TimerContext.Provider value={{ selectedTask, setSelectedTask , startTimer }}>
+    <TimerContext.Provider value={{ selectedTask, setSelectedTask, startTimer, updateTask }}>
       {children}
     </TimerContext.Provider>
   );

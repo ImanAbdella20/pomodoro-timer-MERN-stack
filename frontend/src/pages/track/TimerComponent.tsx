@@ -9,7 +9,7 @@ const TimerComponent: React.FC = () => {
   const [sessionLength, setSessionLength] = useState(25);
   const [breakLength, setBreakLength] = useState(5);
   const [pomodoroStatus, setPomodoroStatus] = useState('Session');
-  const { selectedTask } = useTimer();
+  const { selectedTask, updateTask } = useTimer(); // Assume `updateTask` updates the task in the global state
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -23,6 +23,20 @@ const TimerComponent: React.FC = () => {
               setTimeLeft(sessionLength * 60);
               setIsBreak(false);
             } else {
+              // Update actualPomodoros when a session ends
+              if (selectedTask) {
+                const updatedPomodoros = (selectedTask.actualPomodoros || 0) + 1;
+                updateTask({
+                  ...selectedTask,
+                  actualPomodoros: updatedPomodoros,
+                });
+
+                // Trigger notification if estimatedPomodoros is reached
+                if (updatedPomodoros >= (selectedTask.estimatedPomodoros || 0)) {
+                  showNotification();
+                }
+              }
+
               setPomodoroStatus('Break');
               setTimeLeft(breakLength * 60);
               setIsBreak(true);
@@ -42,7 +56,7 @@ const TimerComponent: React.FC = () => {
         clearInterval(timerRef.current);
       }
     };
-  }, [isRunning, isBreak, breakLength, sessionLength]);
+  }, [isRunning, isBreak, breakLength, sessionLength, selectedTask]);
 
   const handleStartPause = () => {
     setIsRunning(!isRunning);
@@ -73,6 +87,24 @@ const TimerComponent: React.FC = () => {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
     return `${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const showNotification = () => {
+    if (Notification.permission === 'granted') {
+      new Notification('Congratulations!', {
+        body: `You have completed all ${selectedTask?.estimatedPomodoros} Pomodoros for "${selectedTask?.taskName}"!`,
+      });
+    } else if (Notification.permission !== 'denied') {
+      Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+          new Notification('Congratulations!', {
+            body: `You have completed all ${selectedTask?.estimatedPomodoros} Pomodoros for "${selectedTask?.taskName}"!`,
+          });
+        }
+      });
+    } else {
+      alert(`You have completed all ${selectedTask?.estimatedPomodoros} Pomodoros for "${selectedTask?.taskName}"!`);
+    }
   };
 
   useEffect(() => {

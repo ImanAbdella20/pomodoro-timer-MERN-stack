@@ -13,6 +13,7 @@ interface TasksType {
   estimatedPomodoros: number;
   shortBreak: number;
   longBreak: number;
+  actualPomodoros?: number;
 }
 
 const TaskComponent: React.FC = () => {
@@ -20,6 +21,7 @@ const TaskComponent: React.FC = () => {
   const [tasks, setTasks] = useState<TasksType[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<TasksType | null>(null);
   const { setSelectedTask } = useTimer();
   const navigate = useNavigate();
 
@@ -59,7 +61,7 @@ const TaskComponent: React.FC = () => {
   }, [categoryId]);
 
   const handleTaskAdded = (newTask: TasksType) => {
-    const taskWithPendingStatus: TasksType = { ...newTask, status: 'pending' };
+    const taskWithPendingStatus: TasksType = { ...newTask,_id: `${Date.now()}`, status: 'pending' };
     setTasks((prevTasks) => [...prevTasks, taskWithPendingStatus]);
     setShowForm(false);
   };
@@ -68,12 +70,9 @@ const TaskComponent: React.FC = () => {
     setShowForm(!showForm);
   };
 
-  const toggleClose = () => {
-    setShowForm(false);
-  };
-
-  const handleEdit = (taskId: string) => {
-    console.log(`Edit task ${taskId}`);
+  const handleEdit = (task: TasksType) => {
+    setTaskToEdit(task); // Set the task to edit
+    setShowForm(true); // Show the form
   };
 
   const handleStart = (task: TasksType) => {
@@ -81,8 +80,9 @@ const TaskComponent: React.FC = () => {
     navigate('/track');
   };
 
-  const handleDelete = (taskId: string) => {
-    console.log(`Delete task ${taskId}`);
+  const toggleClose = () => {
+    setShowForm(false);
+    setTaskToEdit(null); // Reset the task being edited
   };
 
   const toggleTaskCompletion = async (task: TasksType) => {
@@ -124,14 +124,30 @@ const TaskComponent: React.FC = () => {
     }
   };
 
-  const editTask = async()=> {
-try {
-  
-} catch (error) {
-  
-}
-  }
-  
+  const handleDelete = async (taskId: string) => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      if (!authToken) {
+        throw new Error('No auth token found');
+      }
+
+      // Remove the task from the state
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+
+      // Delete the task from the backend
+      await axios.delete(`${import.meta.env.REACT_APP_API_URL}/tasks/delete/${taskId}`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      setTaskToEdit(null); // Reset the editing task if it was being edited
+      setShowForm(false);  // Close the form after deletion
+    } catch (error) {
+      console.error('Error deleting task', error);
+      setError('Failed to delete task. Please try again.');
+    }
+  };
 
   return (
     <div className="task-component max-w-lg mx-auto">
@@ -139,7 +155,13 @@ try {
       {error && <p className="text-red-500">{error}</p>}
       <div>
         {showForm && categoryId && (
-          <Tasks categoryId={categoryId} onTaskAdded={handleTaskAdded} onClose={toggleClose} />
+          <Tasks 
+          categoryId={categoryId} 
+          onTaskAdded={handleTaskAdded}
+           onClose={toggleClose}
+           taskToEdit={taskToEdit}
+           onDelete = {handleDelete}
+            />
         )}
         {Array.isArray(tasks) && tasks.length === 0 ? (
           <p className="text-center text-red-500">No tasks added.</p>
@@ -166,7 +188,7 @@ try {
                 
                 <div className="icons absolute right-2 top-2 flex space-x-2">
                   <div className="flex space-x-2">
-                  <FaEllipsisV className='mt-4' onClick={() => editTask}/>
+                  <FaEllipsisV className='mt-4' onClick={() => handleEdit(task)}/>
                   </div>
                 </div>
                 

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { doSignInUserWithEmailAndPassword } from '../../firebase/auth';
 import { onGoogleSignIn } from './googleLogin';
-import { Link } from 'react-router-dom';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -24,20 +23,49 @@ const Login: React.FC = () => {
         const userCredential = await doSignInUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
         const idToken = await user.getIdToken();
-        console.log("Id Token:", idToken);
-        
+
         // Store token in local storage
         localStorage.setItem('authToken', idToken);
-        
-        // Redirect after successful login
+
+        // Redirect to the intended page or a default page
         navigate(from, { replace: true });
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        }
+      } catch (err: any) {
+        handleFirebaseError(err);
       } finally {
         setSigningIn(false);
       }
+    }
+  };
+
+  const handleFirebaseError = (error: any) => {
+    if (error.code) {
+      switch (error.code) {
+        case 'auth/invalid-email':
+          setError('The email address is not valid.');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled. Please contact support.');
+          break;
+          case 'auth/invalid-credential':
+            setError('An Invalid Credential');
+            break;
+        case 'auth/user-not-found':
+          setError('No account found with this email address.');
+          break;
+        case 'auth/wrong-password':
+          setError('Incorrect password. Please try again.');
+          break;
+        case 'auth/too-many-requests':
+          setError('Too many failed login attempts. Please try again later.');
+          break;  
+        case 'auth/network-request-failed':
+          setError('Network error. Please check your connection.');
+          break;
+        default:
+          setError('An unexpected error occurred. Please try again.');
+      }
+    } else {
+      setError('An unknown error occurred. Please try again.');
     }
   };
 
@@ -83,7 +111,7 @@ const Login: React.FC = () => {
             <i className='fab fa-google'></i> Login with Google
           </button>
         </form>
-        {error && <p className='bg-slate-700'>{error}</p>}
+        {error && <p className='text-red-500 text-sm mt-3'>{error}</p>}
       </div>
     </div>
   );

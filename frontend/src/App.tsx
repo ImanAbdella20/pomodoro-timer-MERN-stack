@@ -26,11 +26,11 @@ const App: React.FC = () => {
 
       if (currentUser && !initialRedirectHandled) {
         localStorage.setItem('authToken', currentUser.uid); // Store auth token
-        navigate('/category');
+        
         setInitialRedirectHandled(true); // Update the state
       } else if (!currentUser) {
         localStorage.removeItem('authToken'); // Clear auth token
-        navigate('/login');
+        
       }
     });
 
