@@ -34,9 +34,9 @@ const Header: React.FC<{ user: any }> = ({ user }) => {
     <div className='bg-gray-800'>
       <div className='w-full h-14 flex justify-between items-center px-96'>
         <div className='flex space-x-8'>
-          <Link to="/category" className='text-white cursor-pointer nav-link'>Tasks</Link>
+        <Link to="/track" className='text-white cursor-pointer nav-link'>Track</Link>
           <Link to="/about" className='text-white cursor-pointer nav-link'>About</Link>
-          <Link to="/track" className='text-white cursor-pointer nav-link'>Track</Link>
+          <Link to="/category" className='text-white cursor-pointer nav-link'>Tasks</Link>
           <Link to="/setting" className='text-white cursor-pointer nav-link'>Setting</Link>
           <Link to="/statistics" className='text-white cursor-pointer nav-link'>Statistics</Link>
         

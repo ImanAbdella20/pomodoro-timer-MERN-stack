@@ -66,3 +66,32 @@ export const login = async (req, res) => {
     return res.status(500).json({ message: "Error verifying ID token" });
   }
 }
+
+
+export const updateUserProfile = async (req, res) => {
+  const { username, email, profileImage } = req.body;
+  const userId = req.user.id; // Assuming user is authenticated and their ID is passed in `req.user`
+
+  try {
+    // Find the user by their ID and update the fields
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { username, email, profileImage },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Send back the updated user data (excluding password, if applicable)
+    res.json({
+      username: updatedUser.username,
+      email: updatedUser.email,
+      profileImage: updatedUser.profileImage,
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Failed to update profile' });
+  }
+};
