@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios';
-import { doCreateUserWithEmailAndPassword } from '../../firebase/auth';
-import { Link } from 'react-router-dom';
 import { onGoogleSignIn } from './googleLogin';
 import '@fortawesome/fontawesome-free';
 
@@ -12,38 +12,61 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [error, setError] = useState('');
-
+  const navigate = useNavigate();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       console.error("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
+    const auth = getAuth();
     try {
       if (!isRegistering) {
         setIsRegistering(true);
-        const userCredential = await doCreateUserWithEmailAndPassword(email, password);
+        console.log("Firebase sign-up initiated...");
+
+        // Firebase Authentication to create the user with email and password
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
+        console.log("User created:", user);
+
+        // Store the user token
         const idToken = await user.getIdToken();
         console.log("Id Token:", idToken);
-
         localStorage.setItem('authToken', idToken);
 
-        console.log("Sign up initiated");
+        
         await axios.post(`${import.meta.env.REACT_APP_API_URL}/auth/signup`, { 
           username: userName,
           email: email,
           uid: user.uid
         });
-       
-        console.log('User Successfully Created!');
+
+        console.log('User successfully created and signed up!');
+        navigate("/");  // Redirect to dashboard or home page after successful sign-up
       }
-    } catch (error) {
-      console.error('Error signing up:', error);
-      setError('Error signing up. Please try again.');
+    } catch (err: any) {
+      console.error('Error signing up:', err);
+      
+      // Firebase error handling
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          console.log('This email is already in use. Please try another one.');
+          break;
+        case 'auth/invalid-email':
+          console.log('The email address is invalid. Please enter a valid email.');
+          break;
+        case 'auth/weak-password':
+          console.log('The password is too weak. Please choose a stronger password.');
+          break;
+        default:
+          console.log('An unexpected error occurred. Please try again later.');
+          break;
+      }
     } finally {
       setIsRegistering(false);
     }

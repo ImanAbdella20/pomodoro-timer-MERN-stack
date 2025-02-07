@@ -1,5 +1,5 @@
 import express from 'express';
-import { getSetting } from '../controllers/settingController';
+import { getSetting } from '../controllers/settingController.js';
 
 const settingRoute = express.Router();
 

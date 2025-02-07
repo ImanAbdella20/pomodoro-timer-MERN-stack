@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import { login, signUp, updateUserProfile } from '../controllers/authenticationController.js';
-import { validateFirebaseToken } from '../middleware/authMiddleware.js';
+import { deleteAccount, login, signUp, updateUserProfile } from '../controllers/authenticationController.js';
+
 
 const authRoute = express.Router();
 
@@ -13,5 +13,6 @@ const upload = multer({ storage });
 authRoute.post('/signup', signUp)
 authRoute.post('/login',login)
 authRoute.put('/update-profile'  ,upload.single('profileImage'),  updateUserProfile)
+authRoute.delete('/deleteaccount', deleteAccount)
 
 export default authRoute;

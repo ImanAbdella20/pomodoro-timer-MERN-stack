@@ -5,10 +5,14 @@ import { FaEdit } from 'react-icons/fa';
 const Account: React.FC<{ user: any }> = ({ user }) => {
   const [username, setUsername] = useState(user?.username || '');
   const [email, setEmail] = useState(user?.email || '');
+  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [editingEmail, setEditingEmail] = useState(false);
   const [editingName, setEditingName] = useState(false);
+  const [editingPassword, setEditingPassword] = useState(false);
 
   // Use effect to load user data
   useEffect(() => {
@@ -34,9 +38,16 @@ const Account: React.FC<{ user: any }> = ({ user }) => {
 
   // Handle form submission to update profile
   const handleSubmit = async () => {
+    if (newPassword !== confirmPassword) {
+      alert('New passwords do not match!');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('username', username);
     formData.append('email', email);
+    formData.append('password', password);
+    formData.append('newPassword', newPassword);
 
     // Only append profile image if it was updated
     if (profileImage) {
@@ -89,6 +100,20 @@ const Account: React.FC<{ user: any }> = ({ user }) => {
 
       {/* Form for Editing User Info */}
       <div className="flex-1">
+        {/* Username Field */}     
+  <div className="mb-4">
+  <h3 className="text-lg font-medium">
+    <input
+      type="text"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+      className="border p-2 rounded-md w-full"
+    />
+  </h3>
+  </div>
+
+
+        {/* Email Field */}
         <div className="mb-4">
           <h3 className="text-lg font-medium flex items-center">
             {editingEmail ? (
@@ -101,12 +126,51 @@ const Account: React.FC<{ user: any }> = ({ user }) => {
               />
             ) : (
               <>
-                <span className="mr-2">{email}</span>
+                <span className="mr-2 text-white">{email}</span>
                 <FaEdit
                   onClick={() => setEditingEmail(true)}
                   className="cursor-pointer text-blue-950 hover:text-blue-900"
                 />
               </>
+            )}
+          </h3>
+        </div>
+
+        {/* Password Change */}
+        <div className="mb-4">
+          <h3 className="text-lg font-medium flex items-center">
+            {editingPassword ? (
+              <>
+                <input
+                  type="password"
+                  placeholder="Current password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="border p-2 rounded-md w-full mb-2"
+                />
+                <input
+                  type="password"
+                  placeholder="New password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  className="border p-2 rounded-md w-full mb-2"
+                />
+                <input
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="border p-2 rounded-md w-full"
+                  onBlur={() => setEditingPassword(false)}
+                />
+              </>
+            ) : (
+              <button
+                onClick={() => setEditingPassword(true)}
+                className="text-blue-950 hover:text-blue-900"
+              >
+                Change Password
+              </button>
             )}
           </h3>
         </div>

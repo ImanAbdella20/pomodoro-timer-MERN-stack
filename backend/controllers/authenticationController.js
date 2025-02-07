@@ -98,3 +98,28 @@ export const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: 'Failed to update profile' });
   }
 };
+
+
+export const deleteAccount = async (req, res) => {
+  const { uid } = req.body;
+
+  console.log('Received UID:', uid);
+
+  try {
+    // Use findOne to search for the user by 'uid' instead of using findById
+    const user = await User.findOne({ uid });  // Use `findOne` with the 'uid' field, not `findById`
+
+    if (!user) {
+      return res.status(404).send({ error: 'User not found in the database.' });
+    }
+
+    // Delete the user by 'uid' using findOneAndDelete
+    await User.findOneAndDelete({ uid });  // Delete using the 'uid'
+
+    res.status(200).send({ message: 'Account deleted from database.' });
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    res.status(500).json({ message: 'Failed to delete account' });
+  }
+};
+

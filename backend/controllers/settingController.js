@@ -1,4 +1,4 @@
-import { Setting } from "../models/settingModel";
+import { Setting } from "../models/settingModel.js";
 
 export const getSetting = async(req, res) => {
     const getsetting = req.params.id;
