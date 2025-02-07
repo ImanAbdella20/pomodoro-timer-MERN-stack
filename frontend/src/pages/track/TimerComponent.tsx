@@ -116,7 +116,7 @@ const TimerComponent: React.FC = () => {
   }, [selectedTask]);
 
   return (
-    <div className="timer-component flex flex-col items-center justify-center">
+    <div className="timer-component flex flex-col items-center justify-center   bg-slate-700 h-screen">
       <h1 className="text-2xl font-bold mb-4">{selectedTask ? selectedTask.taskName : 'No Task Selected'}</h1>
       <div className="pomodoro-status text-lg font-semibold mb-4">{pomodoroStatus}</div>
       <div className="circular-progress mb-6">

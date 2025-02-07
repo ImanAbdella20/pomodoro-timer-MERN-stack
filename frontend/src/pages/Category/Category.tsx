@@ -56,7 +56,7 @@ const CategoryComponent: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center   bg-slate-700">
       <h1 className="text-center font-bold text-2xl mt-3 text-white">Choose Tasks Category</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div className="max-w-2xl w-full">

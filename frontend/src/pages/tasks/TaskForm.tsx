@@ -44,10 +44,12 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) throw new Error('No auth token found');
-
+  
+      let response;
+  
       if (taskToEdit) {
         // Update existing task
-        const response = await axios.put(
+        response = await axios.put(
           `${import.meta.env.REACT_APP_API_URL}/tasks/update/${taskToEdit._id}`,
           {
             taskName,
@@ -64,11 +66,10 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
             },
           }
         );
-
-        onTaskAdded(response.data); // Notify parent component
+        onTaskAdded(response.data); // Notify parent component of updated task
       } else {
         // Create new task
-        const response = await axios.post(
+        response = await axios.post(
           `${import.meta.env.REACT_APP_API_URL}/tasks/add`,
           {
             taskName,
@@ -85,10 +86,9 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
             },
           }
         );
-
-        onTaskAdded(response.data); // Notify parent component
+        onTaskAdded(response.data); // Notify parent component of new task
       }
-
+  
       // Clear form fields after submission
       setTaskName('');
       setStatus('pending');
@@ -102,6 +102,7 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
       console.error('Error submitting task:', error);
     }
   };
+  
   const handleDeleteClick = () => {
     if (taskToEdit?._id) {
       onDelete(taskToEdit._id); // Pass the task ID to the onDelete function

@@ -67,29 +67,32 @@ export const login = async (req, res) => {
   }
 }
 
-
 export const updateUserProfile = async (req, res) => {
-  const { username, email, profileImage } = req.body;
-  const userId = req.user.id; // Assuming user is authenticated and their ID is passed in `req.user`
+  const { username, email } = req.body; // Get updated username and email
+  const userId = req.user.id; // Assuming the user is authenticated
+
+  // Check if profile image is updated (file is uploaded)
+  const profileImage = req.file ? req.file.path : null;
 
   try {
-    // Find the user by their ID and update the fields
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { username, email, profileImage },
-      { new: true } // Return the updated document
-    );
+    // Prepare the update data object
+    const updateData = { username, email };
 
+    // Only add profile image to update if it's provided
+    if (profileImage) {
+      updateData.profileImage = profileImage;
+    }
+
+    // Update user in the database
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+    // If user not found, return an error
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Send back the updated user data (excluding password, if applicable)
-    res.json({
-      username: updatedUser.username,
-      email: updatedUser.email,
-      profileImage: updatedUser.profileImage,
-    });
+    // Return updated user data
+    res.json(updatedUser);
   } catch (error) {
     console.error('Error updating profile:', error);
     res.status(500).json({ message: 'Failed to update profile' });

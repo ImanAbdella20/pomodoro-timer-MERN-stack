@@ -18,8 +18,22 @@ const Header: React.FC<{ user: any }> = ({ user }) => {
     navigate('/category');
   };
 
-  const handleDeleteAccount = () => {
-    setDropdownOpen(false);
+  const handleDeleteAccount = async () => {
+
+    try {
+      const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
+      if(confirmDelete){
+
+      await doSignOut();
+      setSignedIn(false);
+
+      // Navigate to the home or another relevant page
+      navigate('/tasks');
+      }
+    } catch (error) {
+      console.error('Error deleting account:', error);
+    alert('An error occurred while trying to delete your account.');
+    }
   }
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -31,7 +45,7 @@ const Header: React.FC<{ user: any }> = ({ user }) => {
   };
 
   return (
-    <div className='bg-gray-800'>
+    <div className=' bg-slate-700'>
       <div className='w-full h-14 flex justify-between items-center px-96'>
         <div className='flex space-x-8'>
         <Link to="/track" className='text-white cursor-pointer nav-link'>Track</Link>

@@ -67,18 +67,21 @@ if(!updatedTask){
         return res.status(400).json({message:error.message})
     }
 }
-export const deleteTask = async(req,res) =>{
-const { id } = req.params;
+
+export const deleteTask = async (req, res) => {
+    const { id } = req.params;
     try {
-        const deletedTask = Task.findByIdAndDelete(id);
-        if(!deletedTask){
-            return res.status(400).json({message:"Task not found"})
-        } 
-        return res.status(200).json({message:"Task deleted successfully!"})
+      
+      const deletedTask = await Task.findByIdAndDelete(id);
+      if (!deletedTask) {
+        return res.status(400).json({ message: "Task not found" });
+      }
+      return res.status(200).json({ message: "Task deleted successfully!" });
     } catch (error) {
-        return res.status(400).json({message:error.message})
+      return res.status(400).json({ message: error.message });
     }
-}
+  };
+  
 
 export const getTasksByCategory = async (req, res) => { 
     const { category } = req.query; 

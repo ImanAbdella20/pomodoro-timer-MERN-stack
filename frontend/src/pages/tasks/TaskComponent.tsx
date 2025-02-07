@@ -42,8 +42,6 @@ const TaskComponent: React.FC = () => {
           }
         );
 
-        console.log('API response:', response.data);
-
         if (Array.isArray(response.data)) {
           setTasks(response.data);
         } else {
@@ -61,9 +59,9 @@ const TaskComponent: React.FC = () => {
   }, [categoryId]);
 
   const handleTaskAdded = (newTask: TasksType) => {
-    const taskWithPendingStatus: TasksType = { ...newTask,_id: `${Date.now()}`, status: 'pending' };
-    setTasks((prevTasks) => [...prevTasks, taskWithPendingStatus]);
-    setShowForm(false);
+    // No need for _id generation here, use the one returned from the backend
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setShowForm(false);  // Optionally close the form after adding the task
   };
 
   const toggleShowForm = () => {
@@ -71,8 +69,8 @@ const TaskComponent: React.FC = () => {
   };
 
   const handleEdit = (task: TasksType) => {
-    setTaskToEdit(task); // Set the task to edit
-    setShowForm(true); // Show the form
+    setTaskToEdit(task);
+    setShowForm(true);
   };
 
   const handleStart = (task: TasksType) => {
@@ -82,7 +80,7 @@ const TaskComponent: React.FC = () => {
 
   const toggleClose = () => {
     setShowForm(false);
-    setTaskToEdit(null); // Reset the task being edited
+    setTaskToEdit(null);
   };
 
   const toggleTaskCompletion = async (task: TasksType) => {
@@ -91,18 +89,17 @@ const TaskComponent: React.FC = () => {
       if (!authToken) {
         throw new Error('No auth token found');
       }
-  
-      // Toggle the task status
+
       const updatedStatus = task.status === 'completed' ? 'pending' : 'completed';
       const updatedTask: TasksType = { ...task, status: updatedStatus };
-  
+
       // Optimistically update the task status in the state
       setTasks((prevTasks) =>
         prevTasks.map((t) =>
           t._id === task._id ? updatedTask : t
         )
       );
-  
+
       // Send the updated status to the server
       const response = await axios.put(
         `${import.meta.env.REACT_APP_API_URL}/tasks/update/${task._id}`,
@@ -113,8 +110,8 @@ const TaskComponent: React.FC = () => {
           },
         }
       );
-  
-      // In case the server response is different, update the state again
+
+      // Update task in the state after server response
       const updatedTaskData: TasksType = response.data;
       setTasks((prevTasks) =>
         prevTasks.map((t) => (t._id === task._id ? updatedTaskData : t))
@@ -150,18 +147,18 @@ const TaskComponent: React.FC = () => {
   };
 
   return (
-    <div className="task-component max-w-lg mx-auto">
+    <div className=" max-w-lg mx-auto  bg-slate-700 ">
       <h1 className="text-center font-bold text-2xl text-white mb-7">My Tasks</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div>
         {showForm && categoryId && (
-          <Tasks 
-          categoryId={categoryId} 
-          onTaskAdded={handleTaskAdded}
-           onClose={toggleClose}
-           taskToEdit={taskToEdit}
-           onDelete = {handleDelete}
-            />
+          <Tasks
+            categoryId={categoryId}
+            onTaskAdded={handleTaskAdded}
+            onClose={toggleClose}
+            taskToEdit={taskToEdit}
+            onDelete={handleDelete}
+          />
         )}
         {Array.isArray(tasks) && tasks.length === 0 ? (
           <p className="text-center text-red-500">No tasks added.</p>
@@ -174,9 +171,15 @@ const TaskComponent: React.FC = () => {
               >
                 <div className="flex items-center">
                   {task.status === 'completed' ? (
-                    <FaCheckCircle className="mr-2 cursor-pointer text-red-500" onClick={() => toggleTaskCompletion(task)} />
+                    <FaCheckCircle
+                      className="mr-2 cursor-pointer text-red-500"
+                      onClick={() => toggleTaskCompletion(task)}
+                    />
                   ) : (
-                    <FaRegCircle className="mr-2 cursor-pointer" onClick={() => toggleTaskCompletion(task)} />
+                    <FaRegCircle
+                      className="mr-2 cursor-pointer"
+                      onClick={() => toggleTaskCompletion(task)}
+                    />
                   )}
                   <h2
                     className={`font-bold text-xl text-white ${task.status === 'completed' ? 'line-through' : ''}`}
@@ -185,19 +188,21 @@ const TaskComponent: React.FC = () => {
                     {task.taskName}
                   </h2>
                 </div>
-                
+
                 <div className="icons absolute right-2 top-2 flex space-x-2">
                   <div className="flex space-x-2">
-                  <FaEllipsisV className='mt-4' onClick={() => handleEdit(task)}/>
+                    <FaEllipsisV className="mt-4" onClick={() => handleEdit(task)} />
                   </div>
                 </div>
-                
               </li>
             ))}
           </ul>
         )}
       </div>
-      <button onClick={toggleShowForm} className="pl-14 pr-14 pt-3 pb-3 bg-slate-700 rounded-md text-5xl mt-9">
+      <button
+        onClick={toggleShowForm}
+        className="pl-14 pr-14 pt-3 pb-3 bg-slate-700 rounded-md text-5xl mt-9"
+      >
         {showForm ? 'Hide Form' : '+'}
       </button>
     </div>

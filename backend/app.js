@@ -6,6 +6,7 @@ import cors from 'cors';
 import categoryRoute from './routes/categoryRoute.js';
 import taskRoute from './routes/taskRoute.js';
 import sessionRoute from './routes/sessionRoute.js';
+import settingRoute from './routes/settingRoute.js';
 
 dotenv.config();
 const app = express()
@@ -14,13 +15,24 @@ const app = express()
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-app.use(cors());
+
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  
+}));
+  
+  // Handle preflight requests explicitly
+  app.options('*', cors());
+  
+
 
 // api
 app.use('/auth', authRoute);
 app.use('/category', categoryRoute);
 app.use('/tasks' , taskRoute);
 app.use('/session',sessionRoute);
+app.use('/setting',settingRoute)
 
 
 const connectDB = async() => {
