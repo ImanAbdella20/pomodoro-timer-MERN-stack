@@ -154,9 +154,9 @@ const Setting = () => {
         {/* Theme Settings */}
         <div className="mb-4">
           <h2 className="font-semibold text-lg">Theme Settings</h2>
-          <div className='flex'>
-          <label className="block mb-2">Color Theme:</label>
-          <div className='flex'>
+          <div className='flex relative'>
+          <label className="block mb-2 ">Color Theme:</label>
+          <div className='flex absolute right-0'>
             {colors.map((color) => (
               <div
               key={color}
@@ -169,33 +169,33 @@ const Setting = () => {
             ))}
           </div>
           </div>
-          <label className="block mb-2">
+          <label className="block mb-2 relative">
             Hour Format:
             <select
               value={hourFormat}
               onChange={(e) => setHourFormat(e.target.value)}
-              className="ml-2 p-1 border rounded"
+              className="ml-2 p-1 border rounded absolute right-0"
             >
               <option value="12">12-Hour</option>
               <option value="24">24-Hour</option>
             </select>
           </label>
-          <label className="block mb-2">
+          <label className="block mb-2 relative">
             Dark Mode when Running:
             <input
               type="checkbox"
               checked={darkModeWhenRunning}
               onChange={() => setDarkModeWhenRunning(!darkModeWhenRunning)}
-              className="ml-2"
+              className="ml-2 absolute right-0"
             />
           </label>
-          <label className="block mb-4">
+          <label className="block mb-4 relative">
             Small Window:
             <input
               type="checkbox"
               checked={smallWindow}
               onChange={() => setSmallWindow(!smallWindow)}
-              className="ml-2"
+              className="ml-2 absolute right-0"
             />
           </label>
         </div>
@@ -203,22 +203,22 @@ const Setting = () => {
         {/* Notification Settings */}
         <div className="mb-4">
           <h2 className="font-semibold text-lg">Notification Settings</h2>
-          <label className="block mb-2">
+          <label className="block mb-2 relative">
             Reminder Time (minutes):
             <input
               type="number"
               value={reminderTime}
               onChange={(e) => setReminderTime(Number(e.target.value))}
-              className="ml-2 p-1 border rounded"
+              className="ml-2 p-1 border rounded w-20 absolute right-0"
             />
           </label>
-          <label className="block mb-2">
+          <label className="block mb-2 relative">
             Mobile Alarm:
             <input
               type="checkbox"
               checked={mobileAlarm}
               onChange={() => setMobileAlarm(!mobileAlarm)}
-              className="ml-2"
+              className="ml-2 absolute right-0 mt-2"
             />
           </label>
         </div>
@@ -226,13 +226,13 @@ const Setting = () => {
         {/* Integration Settings */}
         <div className="mb-4">
           <h2 className="font-semibold text-lg">Integration Settings</h2>
-          <label className="block mb-2">
+          <label className="block mb-2 relative">
             Todoist Integration:
             <input
               type="checkbox"
               checked={todoistConnected}
               onChange={() => setTodoistConnected(!todoistConnected)}
-              className="ml-2"
+              className="ml-2 absolute right-0"
             />
           </label>
           <label className="block mb-2">

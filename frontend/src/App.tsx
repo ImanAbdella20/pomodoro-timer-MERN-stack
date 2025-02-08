@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from './firebase/firebaseConfig';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { onAuthStateChanged, User, getRedirectResult } from 'firebase/auth';
+import { auth } from './firebase/firebaseConfig';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Header from './components/header/Header';
 import Login from './pages/Authentication/Login';
 import SignUp from './pages/Authentication/SignUp';
@@ -13,39 +13,43 @@ import Statistics from './pages/statstics/Statstics';
 import About from './pages/about/About';
 import Account from './pages/account/Account';
 import Setting from './pages/Setting/Setting';
-import { doc, getDoc } from "firebase/firestore";
+import axios from 'axios';
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         localStorage.setItem("authToken", currentUser.uid);
-
-        try {
-          const userDocRef = doc(db, "users", currentUser.uid);
-          const userSnap = await getDoc(userDocRef);
-
-          if (userSnap.exists()) {
-            const userData = userSnap.data();
-            setUser({ ...currentUser, ...userData }); // Merge Firestore data with Firebase auth user
-          } else {
-            setUser(currentUser);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          setUser(currentUser);
-        }
+        setUser(currentUser);
       } else {
         setUser(null);
         localStorage.removeItem("authToken");
       }
     });
 
+    // Handle Google login redirect result
+    getRedirectResult(auth).then(async (result) => {
+      if (result) {
+        const user = result.user;
+        const idToken = await user.getIdToken();
+        localStorage.setItem('authToken', idToken);
+
+        // Send token to backend
+        await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, { email: user.email, idToken });
+
+        // Redirect to the intended page or a default page
+        navigate('/', { replace: true });
+      }
+    }).catch((error) => {
+      console.error('Error during redirect result handling:', error);
+    });
+
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
   // Hide header on login/signup pages
   const hideHeader = location.pathname === '/login' || location.pathname === '/signup';

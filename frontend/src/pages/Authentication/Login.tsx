@@ -10,7 +10,7 @@ const Login: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from?.pathname || '/category';
+  const from = location.state?.from?.pathname || '/';
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ const Login: React.FC = () => {
         const user = userCredential.user;
         const idToken = await user.getIdToken();
 
-        // Store token in local storage
+        // Store token in local storage (Consider using cookies in production for better security)
         localStorage.setItem('authToken', idToken);
 
         // Redirect to the intended page or a default page
@@ -46,9 +46,9 @@ const Login: React.FC = () => {
         case 'auth/user-disabled':
           setError('This account has been disabled. Please contact support.');
           break;
-          case 'auth/invalid-credential':
-            setError('An Invalid Credential');
-            break;
+        case 'auth/invalid-credential':
+          setError('Invalid credentials provided.');
+          break;
         case 'auth/user-not-found':
           setError('No account found with this email address.');
           break;
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
           </div>
           <button
             className='bg-slate-700 w-full h-9 rounded-md text-white'
-            onClick={(e) => onGoogleSignIn(e, signingIn, setSigningIn, setError)}
+            onClick={(e) => onGoogleSignIn(e, signingIn, setSigningIn, setError, navigate, from)}
             disabled={signingIn}
           > 
             <i className='fab fa-google'></i> Login with Google

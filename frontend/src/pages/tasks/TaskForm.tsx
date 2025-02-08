@@ -9,6 +9,7 @@ interface TasksType {
   estimatedPomodoros: number;
   shortBreak: number;
   longBreak: number;
+  dueDate?: string; // Make sure dueDate is optional
 }
 
 interface TasksProps {
@@ -19,13 +20,14 @@ interface TasksProps {
   onDelete: (taskId: string) => void;
 }
 
-const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToEdit,onDelete }) => {
+const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToEdit, onDelete }) => {
   const [taskName, setTaskName] = useState('');
   const [status, setStatus] = useState<'pending' | 'in progress' | 'completed'>('pending');
   const [priority, setPriority] = useState<'low' | 'medium' | 'high'>('medium');
-  const [estimatedPomodoros, setEstimatedPomodoros] = useState(0);
+  const [estimatedPomodoros, setEstimatedPomodoros] = useState(0); // Number type for estimatedPomodoros
   const [shortBreak, setShortBreak] = useState(0);
   const [longBreak, setLongBreak] = useState(0);
+  const [dueDate, setDueDate] = useState(''); // Add due date field
   const [error, setError] = useState('');
 
   // Populate form fields if taskToEdit is provided
@@ -37,6 +39,7 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
       setEstimatedPomodoros(taskToEdit.estimatedPomodoros);
       setShortBreak(taskToEdit.shortBreak);
       setLongBreak(taskToEdit.longBreak);
+      setDueDate(taskToEdit.dueDate || ''); // Optional field for due date
     }
   }, [taskToEdit]);
 
@@ -44,20 +47,22 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
     try {
       const authToken = localStorage.getItem('authToken');
       if (!authToken) throw new Error('No auth token found');
-  
+
       let response;
-  
+
       if (taskToEdit) {
         // Update existing task
         response = await axios.put(
           `${import.meta.env.REACT_APP_API_URL}/tasks/update/${taskToEdit._id}`,
           {
+            _id: taskToEdit._id, // Ensure _id is included in the update payload
             taskName,
             status,
             priority,
             estimatedPomodoros,
             shortBreak,
             longBreak,
+            dueDate,
             category: categoryId,
           },
           {
@@ -78,6 +83,7 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
             estimatedPomodoros,
             shortBreak,
             longBreak,
+            dueDate,
             category: categoryId,
           },
           {
@@ -88,7 +94,7 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
         );
         onTaskAdded(response.data); // Notify parent component of new task
       }
-  
+
       // Clear form fields after submission
       setTaskName('');
       setStatus('pending');
@@ -96,19 +102,19 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
       setEstimatedPomodoros(0);
       setShortBreak(0);
       setLongBreak(0);
+      setDueDate('');
       onClose(); // Close the form
     } catch (error) {
       setError('Failed to submit task. Please try again.');
       console.error('Error submitting task:', error);
     }
   };
-  
+
   const handleDeleteClick = () => {
     if (taskToEdit?._id) {
       onDelete(taskToEdit._id); // Pass the task ID to the onDelete function
     }
   };
-
 
   return (
     <div className="tasks-overlay relative z-10">
@@ -163,10 +169,46 @@ const Tasks: React.FC<TasksProps> = ({ categoryId, onTaskAdded, onClose, taskToE
           value={estimatedPomodoros}
           onChange={(e) => setEstimatedPomodoros(Number(e.target.value))}
         />
-          <div className="flex justify-between mt-4">
+
+        <label htmlFor="shortBreak" className="block mb-1">
+          Short Break:
+        </label>
+        <input
+          id="shortBreak"
+          className="task-input border p-2 rounded mb-2 w-full"
+          type="number"
+          placeholder="Short Break"
+          value={shortBreak}
+          onChange={(e) => setShortBreak(Number(e.target.value))}
+        />
+
+        <label htmlFor="longBreak" className="block mb-1">
+          Long Break:
+        </label>
+        <input
+          id="longBreak"
+          className="task-input border p-2 rounded mb-2 w-full"
+          type="number"
+          placeholder="Long Break"
+          value={longBreak}
+          onChange={(e) => setLongBreak(Number(e.target.value))}
+        />
+
+        <label htmlFor="dueDate" className="block mb-1">
+          Due Date:
+        </label>
+        <input
+          id="dueDate"
+          className="task-input border p-2 rounded mb-2 w-full"
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
+
+        <div className="flex justify-between mt-4">
           {taskToEdit && (
             <a
-              className=" text-red-600 cursor-pointer "
+              className="text-red-600 cursor-pointer"
               onClick={handleDeleteClick}
             >
               Delete Task

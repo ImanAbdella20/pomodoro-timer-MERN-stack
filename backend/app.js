@@ -17,29 +17,31 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:5174',
     credentials: true,
-  
 }));
-  
-  // Handle preflight requests explicitly
-  app.options('*', cors());
-  
 
+// Set COOP headers
+app.use((req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    next();
+});
+  
+// Handle preflight requests explicitly
+app.options('*', cors());
 
 // api
 app.use('/auth', authRoute);
 app.use('/category', categoryRoute);
 app.use('/tasks' , taskRoute);
 app.use('/session',sessionRoute);
-app.use('/setting',settingRoute)
-
+app.use('/setting',settingRoute);
 
 const connectDB = async() => {
     try {
         await mongoose.connect(process.env.CONNECTION_STRING , {
-             useNewUrlParser: true, 
-             useUnifiedTopology: true,
+            useNewUrlParser: true, 
+            useUnifiedTopology: true,
             ssl: true, 
         })
         console.log("Database Connected Successfully!");
@@ -50,5 +52,3 @@ const connectDB = async() => {
 }
 
 export {app , connectDB}
-
-

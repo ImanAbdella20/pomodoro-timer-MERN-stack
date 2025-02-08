@@ -1,24 +1,25 @@
 import { auth } from './firebaseConfig';
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import type { UserCredential } from 'firebase/auth'; 
 
-export const doCreateUserWithEmailAndPassword = async (email: string, password: string) => {
+export const doCreateUserWithEmailAndPassword = async (email: string, password: string): Promise<UserCredential> => {
   return createUserWithEmailAndPassword(auth, email, password);
 };
 
-export const doSignInUserWithEmailAndPassword = async (email: string, password: string) => {
+export const doSignInUserWithEmailAndPassword = async (email: string, password: string): Promise<UserCredential> => {
   return signInWithEmailAndPassword(auth, email, password);
 };
 
-export const doSignInWithGoogle = async () => {
+export const doSignInWithGoogle = async (): Promise<UserCredential> => {
   const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  // result.user
-  return result;
+  const userCredential = await signInWithPopup(auth, provider); // Use signInWithPopup instead of signInWithRedirect
+  return userCredential;
 };
 
-export const doSignOut = () => {
-  return auth.signOut();
+export const doSignOut = async (): Promise<void> => {
+  await auth.signOut();
 };
+
 
 
 // export const doPasswordReset = (email) => {

@@ -59,9 +59,15 @@ const TaskComponent: React.FC = () => {
   }, [categoryId]);
 
   const handleTaskAdded = (newTask: TasksType) => {
-    // No need for _id generation here, use the one returned from the backend
-    setTasks((prevTasks) => [...prevTasks, newTask]);
-    setShowForm(false);  // Optionally close the form after adding the task
+    setTasks((prevTasks) => {
+      const taskExists = prevTasks.some(task => task._id === newTask._id);
+      if (taskExists) {
+        return prevTasks.map(task => task._id === newTask._id ? newTask : task);
+      } else {
+        return [...prevTasks, newTask];
+      }
+    });
+    setShowForm(false);
   };
 
   const toggleShowForm = () => {
@@ -147,7 +153,7 @@ const TaskComponent: React.FC = () => {
   };
 
   return (
-    <div className=" max-w-lg mx-auto  bg-slate-700 ">
+    <div className="max-w-lg mx-auto bg-slate-700">
       <h1 className="text-center font-bold text-2xl text-white mb-7">My Tasks</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div>

@@ -3,10 +3,7 @@ import { doSignInWithGoogle } from "../../firebase/auth";
 
 
 export const onGoogleSignIn = async (
-    e: React.FormEvent,
-    signingIn:boolean, 
-    setSigningIn:React.Dispatch<React.SetStateAction<boolean>>,
-    setError:React.Dispatch<React.SetStateAction<string>>,
+e: React.FormEvent, signingIn: boolean, setSigningIn: React.Dispatch<React.SetStateAction<boolean>>, setError: React.Dispatch<React.SetStateAction<string>>, navigate: unknown, from: any,
 ) => {
     e.preventDefault();
 
