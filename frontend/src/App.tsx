@@ -23,33 +23,33 @@ const App: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        localStorage.setItem("authToken", currentUser.uid);
         setUser(currentUser);
       } else {
         setUser(null);
         localStorage.removeItem("authToken");
       }
     });
-
+  
     // Handle Google login redirect result
     getRedirectResult(auth).then(async (result) => {
       if (result) {
         const user = result.user;
         const idToken = await user.getIdToken();
         localStorage.setItem('authToken', idToken);
-
+  
         // Send token to backend
         await axios.post(`${process.env.REACT_APP_API_URL}/auth/login`, { email: user.email, idToken });
-
+  
         // Redirect to the intended page or a default page
         navigate('/', { replace: true });
       }
     }).catch((error) => {
       console.error('Error during redirect result handling:', error);
     });
-
+  
     return () => unsubscribe();
   }, [navigate]);
+  
 
   // Hide header on login/signup pages
   const hideHeader = location.pathname === '/login' || location.pathname === '/signup';
@@ -59,7 +59,7 @@ const App: React.FC = () => {
       <div>
         {!hideHeader && <Header user={user} />}
         <Routes>
-          <Route path="/" element={<Category />} />
+          <Route path="/" element={<Track />} />
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />

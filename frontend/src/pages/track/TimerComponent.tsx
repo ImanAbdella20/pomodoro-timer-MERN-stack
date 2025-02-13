@@ -3,11 +3,12 @@ import { FaPlay, FaPause, FaRedo, FaMinus, FaPlus } from 'react-icons/fa';
 import { useTimer } from '../../context/TimerContext';
 
 const TimerComponent: React.FC = () => {
-  const { selectedTask, updateTask } = useTimer(); // Access global task state
+  const { selectedTask, updateTask, currentUser } = useTimer(); // Access global task state and current user
 
-  const [timeLeft, setTimeLeft] = useState(1500); // Default 25 min
-  const [isRunning, setIsRunning] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
+  // Retrieve stored states from localStorage
+  const [timeLeft, setTimeLeft] = useState(() => Number(localStorage.getItem('timeLeft')) || 1500);
+  const [isRunning, setIsRunning] = useState(() => localStorage.getItem('isRunning') === 'true');
+  const [isBreak, setIsBreak] = useState(() => localStorage.getItem('isBreak') === 'true');
   const [sessionLength, setSessionLength] = useState(25);
   const [shortBreakLength, setShortBreakLength] = useState(5);
   const [longBreakLength, setLongBreakLength] = useState(15);
@@ -15,23 +16,73 @@ const TimerComponent: React.FC = () => {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Store user data in localStorage when it changes
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+  }, [currentUser]);
+
+  // Retrieve user data from localStorage when the component mounts
+  useEffect(() => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      // Use this to set user state in TimerContext or perform necessary actions
+    }
+  }, []);
+
+  // Reset timer when the user logs out
+  useEffect(() => {
+    if (!currentUser) {
+      resetTimer();
+    }
+  }, [currentUser]);
+
+  // Run timer logic and store states in localStorage whenever they change
   useEffect(() => {
     if (isRunning) {
       timerRef.current = setInterval(() => {
         setTimeLeft((prevTime) => {
-          if (prevTime === 0) {
+          if (prevTime <= 1) {
             handleSessionEnd();
+            return 0;
           }
-          return prevTime > 0 ? prevTime - 1 : 0;
+          return prevTime - 1;
         });
       }, 1000);
     } else {
       clearIntervalTimer();
     }
-    return () => clearIntervalTimer();
-  }, [isRunning]);
 
-  // Handles the transition between sessions and breaks
+    localStorage.setItem('timeLeft', timeLeft.toString());
+    localStorage.setItem('isRunning', isRunning.toString());
+    localStorage.setItem('isBreak', isBreak.toString());
+
+    return () => clearIntervalTimer();
+  }, [isRunning, timeLeft, isBreak]);
+
+  // Retrieve stored states on mount
+  useEffect(() => {
+    setTimeLeft(Number(localStorage.getItem('timeLeft')) || 1500);
+    setIsRunning(localStorage.getItem('isRunning') === 'true');
+    setIsBreak(localStorage.getItem('isBreak') === 'true');
+  }, []);
+
+  const clearIntervalTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const resetTimer = () => {
+    setIsRunning(false);
+    setIsBreak(false);
+    setTimeLeft(sessionLength * 60); // Reset to session length
+    setPomodoroStatus('Session');
+  };
+
   const handleSessionEnd = () => {
     if (isBreak) {
       startNewSession();
@@ -40,14 +91,13 @@ const TimerComponent: React.FC = () => {
     }
   };
 
-  // Start a new work session after a break
   const startNewSession = () => {
     setPomodoroStatus('Session');
     setTimeLeft(sessionLength * 60);
     setIsBreak(false);
+    setIsRunning(true);
   };
 
-  // Handles Pomodoro session completion logic
   const completePomodoroSession = () => {
     if (selectedTask) {
       const updatedPomodoros = (selectedTask?.actualPomodoros ?? 0) + 1;
@@ -68,15 +118,13 @@ const TimerComponent: React.FC = () => {
       setTimeLeft(shortBreakLength * 60);
     }
     setIsBreak(true);
+    setIsRunning(true);
   };
 
   const handleStartPause = () => setIsRunning(!isRunning);
 
   const handleReset = () => {
-    setIsRunning(false);
-    setIsBreak(false);
-    setTimeLeft(sessionLength * 60);
-    setPomodoroStatus('Session');
+    resetTimer();
   };
 
   const handleLengthChange = (type: 'session' | 'shortBreak' | 'longBreak', amount: number) => {
@@ -112,21 +160,6 @@ const TimerComponent: React.FC = () => {
 
   const showNotification = () => {
     sendMessage(`🎉 All ${selectedTask?.estimatedPomodoros ?? 0} Pomodoros completed for "${selectedTask?.taskName}"!`);
-  };
-
-  useEffect(() => {
-    if (selectedTask) {
-      setPomodoroStatus('Session');
-      setTimeLeft(sessionLength * 60);
-      setIsRunning(true);
-    }
-  }, [selectedTask]);
-
-  const clearIntervalTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
   };
 
   return (
@@ -184,4 +217,4 @@ const TimerComponent: React.FC = () => {
   );
 };
 
-export default TimerComponent;
+export default TimerComponent

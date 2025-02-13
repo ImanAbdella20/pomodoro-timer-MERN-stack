@@ -1,14 +1,14 @@
-// TimerContext.tsx
 import React, { createContext, useState, useContext, Dispatch, SetStateAction, ReactNode } from 'react';
 
 // Define the context value type
 interface TimerContextType {
+  currentUser: any;  // User type can be more specific
+  setCurrentUser: Dispatch<SetStateAction<any>>;  // Set user
   selectedTask: TaskType | null;
   setSelectedTask: Dispatch<SetStateAction<TaskType | null>>;
   startTimer: () => void;
-  updateTask: (updatedTask: TaskType) => void; // New method
+  updateTask: (updatedTask: TaskType) => void;
 }
-
 
 // Define the TaskType interface
 interface TaskType {
@@ -29,13 +29,16 @@ interface TimerProviderProps {
 
 // Create the context with default values
 const TimerContext = createContext<TimerContextType>({
+  currentUser: null,
+  setCurrentUser: () => {},
   selectedTask: null,
-  setSelectedTask: () => { },
-  startTimer: () => { },
+  setSelectedTask: () => {},
+  startTimer: () => {},
   updateTask: () => {},
 });
 
 export const TimerProvider: React.FC<TimerProviderProps> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<any>(null); // Track the user
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
@@ -50,10 +53,11 @@ export const TimerProvider: React.FC<TimerProviderProps> = ({ children }) => {
   };
 
   return (
-    <TimerContext.Provider value={{ selectedTask, setSelectedTask, startTimer, updateTask }}>
+    <TimerContext.Provider value={{ currentUser, setCurrentUser, selectedTask, setSelectedTask, startTimer, updateTask }}>
       {children}
     </TimerContext.Provider>
   );
 };
 
+// Custom hook to use the Timer context
 export const useTimer = () => useContext(TimerContext);
