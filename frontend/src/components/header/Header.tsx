@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { doSignOut } from "../../firebase/auth";
 import "../../index.css";
 import { FaUserCircle } from "react-icons/fa";
@@ -9,11 +9,31 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import axios from "axios";
-
 const Header: React.FC<{ user: any }> = ({ user }) => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(!!user);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const userIconRef = useRef<HTMLDivElement>(null); // Ref for the user icon
+
+  const handleClickOutside = (event: MouseEvent) => {
+    // Close the dropdown only if the click is outside both the dropdown and the user icon
+    if (
+      dropdownRef.current && 
+      !dropdownRef.current.contains(event.target as Node) &&
+      userIconRef.current && 
+      !userIconRef.current.contains(event.target as Node)
+    ) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     setSignedIn(!!user);
@@ -123,7 +143,7 @@ const Header: React.FC<{ user: any }> = ({ user }) => {
           </Link>
         </div>
 
-        <div className="relative">
+        <div className="relative" ref={userIconRef}>
           {signedIn ? (
             <FaUserCircle
               className="text-white text-2xl cursor-pointer"
@@ -136,7 +156,7 @@ const Header: React.FC<{ user: any }> = ({ user }) => {
           )}
 
           {dropdownOpen && signedIn && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50" ref={dropdownRef}>
               <button
                 onClick={() => handleNavigate("/account")}
                 className="block px-4 py-2 text-sm text-black hover:bg-gray-100 w-full text-left"

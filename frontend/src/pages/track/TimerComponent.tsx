@@ -3,15 +3,12 @@ import { FaPlay, FaPause, FaRedo, FaMinus, FaPlus } from 'react-icons/fa';
 import { useTimer } from '../../context/TimerContext';
 
 const TimerComponent: React.FC = () => {
-  const { selectedTask, updateTask, currentUser } = useTimer(); // Access global task state and current user
+  const { sessionLength, shortBreakLength, longBreakLength, updateTimerSettings, selectedTask, updateTask, currentUser } = useTimer();
 
   // Retrieve stored states from localStorage
-  const [timeLeft, setTimeLeft] = useState(() => Number(localStorage.getItem('timeLeft')) || 1500);
+  const [timeLeft, setTimeLeft] = useState(() => Number(localStorage.getItem('timeLeft')) || sessionLength * 60); // Initialize with session length
   const [isRunning, setIsRunning] = useState(() => localStorage.getItem('isRunning') === 'true');
   const [isBreak, setIsBreak] = useState(() => localStorage.getItem('isBreak') === 'true');
-  const [sessionLength, setSessionLength] = useState(25);
-  const [shortBreakLength, setShortBreakLength] = useState(5);
-  const [longBreakLength, setLongBreakLength] = useState(15);
   const [pomodoroStatus, setPomodoroStatus] = useState('Session');
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -22,6 +19,11 @@ const TimerComponent: React.FC = () => {
       localStorage.setItem('currentUser', JSON.stringify(currentUser));
     }
   }, [currentUser]);
+
+  // Reset timer when sessionLength, shortBreakLength, or longBreakLength changes
+  useEffect(() => {
+    setTimeLeft(sessionLength * 60);  // Reset timeLeft based on the updated session length
+  }, [sessionLength]);
 
   // Retrieve user data from localStorage when the component mounts
   useEffect(() => {
@@ -62,13 +64,6 @@ const TimerComponent: React.FC = () => {
     return () => clearIntervalTimer();
   }, [isRunning, timeLeft, isBreak]);
 
-  // Retrieve stored states on mount
-  useEffect(() => {
-    setTimeLeft(Number(localStorage.getItem('timeLeft')) || 1500);
-    setIsRunning(localStorage.getItem('isRunning') === 'true');
-    setIsBreak(localStorage.getItem('isBreak') === 'true');
-  }, []);
-
   const clearIntervalTimer = () => {
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -93,7 +88,7 @@ const TimerComponent: React.FC = () => {
 
   const startNewSession = () => {
     setPomodoroStatus('Session');
-    setTimeLeft(sessionLength * 60);
+    setTimeLeft(sessionLength * 60);  // Reset to new session length
     setIsBreak(false);
     setIsRunning(true);
   };
@@ -112,10 +107,10 @@ const TimerComponent: React.FC = () => {
 
     if ((selectedTask?.actualPomodoros ?? 0) % 4 === 0) {
       setPomodoroStatus('Long Break');
-      setTimeLeft(longBreakLength * 60);
+      setTimeLeft(longBreakLength * 60);  // Set timeLeft for long break
     } else {
       setPomodoroStatus('Break');
-      setTimeLeft(shortBreakLength * 60);
+      setTimeLeft(shortBreakLength * 60);  // Set timeLeft for short break
     }
     setIsBreak(true);
     setIsRunning(true);
@@ -129,12 +124,18 @@ const TimerComponent: React.FC = () => {
 
   const handleLengthChange = (type: 'session' | 'shortBreak' | 'longBreak', amount: number) => {
     if (type === 'session') {
-      setSessionLength((prev) => Math.max(1, prev + amount));
-      if (!isBreak && !isRunning) setTimeLeft(Math.max(1, (sessionLength + amount) * 60));
+      // Update session length and timeLeft immediately
+      const newSessionLength = sessionLength + amount;
+      updateTimerSettings('session', newSessionLength);
+      if (!isBreak && !isRunning) {
+        setTimeLeft(Math.max(1, newSessionLength * 60)); // Update timeLeft
+      }
     } else if (type === 'shortBreak') {
-      setShortBreakLength((prev) => Math.max(1, prev + amount));
+      // Use updateTimerSettings to update the short break length in the context
+      updateTimerSettings('shortBreak', shortBreakLength + amount);
     } else if (type === 'longBreak') {
-      setLongBreakLength((prev) => Math.max(1, prev + amount));
+      // Use updateTimerSettings to update the long break length in the context
+      updateTimerSettings('longBreak', longBreakLength + amount);
     }
   };
 
@@ -217,4 +218,4 @@ const TimerComponent: React.FC = () => {
   );
 };
 
-export default TimerComponent
+export default TimerComponent;
